@@ -1,0 +1,2 @@
+ipairs changed to pairs upstream for "performance" ?
+possibly add back in ABM to automatically remove old protection (with command)
