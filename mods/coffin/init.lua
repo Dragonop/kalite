@@ -93,7 +93,9 @@ minetest.register_on_dieplayer(function(player)
 	local param2 = minetest.dir_to_facedir(player:get_look_dir())
 	
 	local nn = minetest.get_node(pos).name
-	if minetest.is_protected(pos, player:get_player_name()) then
+	print(nn)
+	if minetest.is_protected(pos, player:get_player_name()) or
+	    nn == "default:cloud" then
 		default.drop_player_inventory(pos, player)
 		local player_inv = player:get_inventory()
 
