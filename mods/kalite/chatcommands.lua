@@ -1,6 +1,5 @@
 minetest.register_chatcommand("killme", {
-        --params = "",
-        description = "Kill yourself",
+        description = "Die and respawn",
         func = function(playerName, param)
                 minetest.after(0.1, function()
                         minetest.get_player_by_name(playerName):set_hp(0)
@@ -9,12 +8,11 @@ minetest.register_chatcommand("killme", {
 })
 
 minetest.register_chatcommand("reset", {
-        --params = "",
-        description = "Resets position, spawn point, and clears inventory",
+        description = "Reset position, respawn, and inventory",
         func = function(name, param)
                 minetest.after(0.1, function()
                         local player = minetest.get_player_by_name(name)
-                        player:setpos({x=-1, y=-26112, z=20}) --TODO: make minetest.setting_get("static_spawnpoint")
+                        player:setpos({x = -1, y = -26112, z = 20}) --TODO: make minetest.setting_get("static_spawnpoint")
                         local player_inv = player:get_inventory()
 
                         for i=1, player_inv:get_size("main") do
@@ -25,40 +23,22 @@ minetest.register_chatcommand("reset", {
                         end
 			player:set_hp(20)
 			hunger.update_hunger(player, 20)
-                        --player:get_inventory():add_item('main', 'kalite:walkie_talkie')
-                        --player:get_inventory():add_item('main', 'default:gold_ingot')
-                        beds.spawn[name] = {x=-1, y=-26112, z=20}
+                        beds.spawn[name] = {x = -1, y = -26112, z = 20}
                         beds.save_spawns()
                 end)
         end
 })
 
-minetest.register_chatcommand("skin", {
-	params = "<name>",
-	description = "Enter either sam or dusty as your skin name",
-	func = function(name, param)
-		local skin
-		if param == "" then
-			skin = "dusty" -- Set default skin
-		else
-			skin = param
-		end
-		local player = minetest.get_player_by_name(name)
-		player:set_properties({textures = {"character_" .. skin .. ".png"}})
-	end
-})
-
 minetest.register_chatcommand("funds", {
-	params = "<withdraw>",
-	description = "List or get funds",
-	func = function(name, param)
-		local player_inv = minetest.get_player_by_name(name):get_inventory()
-		local n = player_inv:get_stack("funds", 1):get_count()
-		print(dump(player_inv:get_stack("funds", 1):get_name()))
-		if param == "withdraw" then
-			minetest.chat_send_player(name, "Testing only.  Currently not implemented.")
-		else
-			minetest.chat_send_player(name, "You have " .. n .. " credit(s).")
-		end
+	description = "Print funds",
+	func = function(name)
+		--local player = minetest.get_player_by_name()
+		local inv = minetest.get_inventory({type = "player", name = name})
+		local e = inv:get_stack("emerald", 1)
+		local d = inv:get_stack("diamond", 1)
+		local g = inv:get_stack("gold", 1)
+		minetest.chat_send_player(name, "Emeralds: " .. e:get_count())
+		minetest.chat_send_player(name, "Diamonds: " .. d:get_count())
+		minetest.chat_send_player(name, "Gold Ingots: " .. g:get_count())
 	end
 })
