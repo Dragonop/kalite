@@ -4,13 +4,38 @@
 -- Dependencies: (none)
 
 
+shout = {}
+local channel = {}
+
 -- WALKIE TALKIE
 
 minetest.register_craftitem("kalite:walkie_talkie", {
 	description = "Walkie Talkie",
 	inventory_image = "kalite_walkie_talkie.png",
 	stack_max = 1,
+	on_use = function(itemstack, user, pointed_thing)
+		local name = user:get_player_name()
+		minetest.show_formspec(name, "kalite:walkie_talkie",
+		    "field[channel;Channel:;" .. channel[name] .. "]")
+	end
 })
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	if formname ~= "kalite:walkie_talkie" then
+		return
+	end
+	print(dump(fields))
+
+	local input = tonumber(fields.channel)
+	local name = player:get_player_name()
+	if not input or
+	    input > 30912 or input < 1 then
+		return
+	else
+		channel[name] = input
+	end
+
+end)
 
 minetest.register_craft({
 	output = "kalite:walkie_talkie",
@@ -21,11 +46,17 @@ minetest.register_craft({
 	}
 })
 
+-- Always join on channel 1
+minetest.register_on_joinplayer(function(player)
+	channel[player:get_player_name()] = 1
+end)
 
-shout = {}
+minetest.register_on_leaveplayer(function(player)
+	channel[player:get_player_name()] = nil
+end)
 
 -- Parameter
-shout.DISTANCE	= 64	-- Distance (nodes)
+shout.DISTANCE	= 64
 
 shout.DISTANCESQ = shout.DISTANCE ^ 2
 -- Limit chat by distance given in shout.DISTANCE parameter
@@ -39,7 +70,9 @@ minetest.register_on_chat_message(function(name, message)
 		elseif message == "/sethome" then
 			minetest.chat_send_player(name, "Use an Emerald Warpstone to set your home.")
 		end
+
 		minetest.log("action", "CHAT: <" .. name .. "> " .. message)
+
 		local shouter = minetest.get_player_by_name(name)
 		local spos = shouter:getpos()
 		
@@ -47,26 +80,32 @@ minetest.register_on_chat_message(function(name, message)
 		local function vdistancesq(a,b) local x,y,z = a.x-b.x,a.y-b.y,a.z-b.z return x*x+y*y+z*z end
 		if shouter:get_inventory():contains_item("main", "kalite:walkie_talkie") then
 			for _, player in ipairs(minetest.get_connected_players()) do
-				if not player:get_player_name() ~= nil then
-					if player:get_player_name() ~= shouter:get_player_name() then
-						if player:get_inventory():contains_item("main", "kalite:walkie_talkie") then
-							minetest.chat_send_player(player:get_player_name(), "<"..name.."> "..message)
+				local dest = player:get_player_name()
+				if not dest ~= nil then
+					if dest ~= name then
+						if player:get_inventory():contains_item("main", "kalite:walkie_talkie") and
+						    channel[dest] == channel[name] then
+							minetest.chat_send_player(dest,
+							    "<" .. name .. "> " .. message)
 						else
 							local pos = player:getpos()
 							if vdistancesq(spos, pos) <= shout.DISTANCESQ then
-								minetest.chat_send_player(player:get_player_name(), "<"..name.."> "..message)
+								minetest.chat_send_player(dest,
+								    "<" .. name .. "> " .. message)
 							end
 						end
 					end
 				end
 			end
 		else
-			for _,player in ipairs(minetest.get_connected_players()) do
-				if not player:get_player_name() ~= nil then
-					if player:get_player_name() ~= shouter:get_player_name() then
+			for _, player in ipairs(minetest.get_connected_players()) do
+				local dest = player:get_player_name()
+				if not dest ~= nil then
+					if dest ~= name then
 						local pos = player:getpos()
-						if vdistancesq(spos,pos) <= shout.DISTANCESQ then
-							minetest.chat_send_player(player:get_player_name(), "<"..name.."> "..message)
+						if vdistancesq(spos, pos) <= shout.DISTANCESQ then
+							minetest.chat_send_player(dest,
+							    "<" .. name .. "> " .. message)
 						end
 					end
 				end
