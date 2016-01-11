@@ -9,12 +9,18 @@ of the license, or (at your option) any later version.
 
 --]]
 
--- Make mese warp ward off attackers.
--- Disable PvP in area of mese warpstone?
--- Teleport away attacks if attack near warpstone? (Jail?)
+-- Modified by James Stevenson
+
+-- TODO
+-- Teleport away attacker if player wields Mese Warpstone.
+-- See through models / Improved textures
+-- Rotation
+
+
 
 warps = {}
 warps_queue = {}
+warps.stone_pos = {}
 queue_state = 0
 local warps_freeze = 5
 -- t = time in usec
@@ -22,7 +28,8 @@ local warps_freeze = 5
 -- w = warp name
 
 local warp = function(player, dest)
-	for i = 1,table.getn(warps) do
+	local name = player:get_player_name()
+	for i = 1, table.getn(warps) do
 		if warps[i].name == dest then
 			player:setpos({x = warps[i].x, y = warps[i].y, z = warps[i].z})
 			-- MT Core FIXME
@@ -30,15 +37,17 @@ local warp = function(player, dest)
 			-- https://github.com/minetest/minetest/issues/2658
 			player:set_look_yaw(warps[i].yaw - (math.pi/2))
 			player:set_look_pitch(0 - warps[i].pitch)
-			minetest.chat_send_player(player:get_player_name(), "Warped to \"" .. dest .. "\"")
-			minetest.log("action", player:get_player_name() .. " warped to \"" .. dest .. "\"")
+			minetest.log("action", name .. " warped to \"" .. dest .. "\"")
 			minetest.sound_play("item_drop_pickup", {
 				pos = {x = warps[i].x, y = warps[i].y, z = warps[i].z},
 			})
 			return
 		end
 	end
-	minetest.chat_send_player(player:get_player_name(), "Unknown warp \"" .. dest .. "\"")
+	if string.match(dest, "home_" .. name) then
+		minetest.chat_send_player(name .. "No home set")
+	end
+	minetest.chat_send_player(name, "Unknown warp \"" .. dest .. "\"")
 end
 
 do_warp_queue = function()
@@ -75,8 +84,7 @@ local warp_queue_add = function(player, dest)
 		pos = player:getpos(),
 		p = player,
 		w = dest,
-		--sh = minetest.sound_play("warps_woosh", { pos = player:getpos() })
-		sh = minetest.sound_play("warps_woosh", {pos = player:getpos(), gain = 1, max_hear_distance = 8})
+		sh = minetest.sound_play("warps_woosh", {pos = player:getpos(), gain = 0.5, max_hear_distance = 8})
 	})
 	minetest.chat_send_player(player:get_player_name(), "Don't move for " .. warps_freeze .. " seconds!")
 	if queue_state == 0 then
@@ -246,6 +254,67 @@ minetest.register_craft({
 })
 
 
+-- INTERFACE
+
+local function warp_menu(pos, node, clicker, itemstack, pointed_thing)
+	local warpstone = node.name
+	local name = clicker:get_player_name()
+	if warpstone == "warps:warpstone_crystal" or
+	    warpstone == "warps:warpstone_amethyst" then
+		if not minetest.check_player_privs(clicker, {warp_admin = true}) then
+			return
+		end
+		local formspec = "field[destination; Warp Destination;]"
+		minetest.show_formspec(name, "warps:warpstone", formspec)
+	elseif warpstone == "warps:warpstone_emerald" then
+		local formspec = "size[3.5,0.15]" ..
+			"button_exit[-0.2,-0.3;2,1;sethome;Set Home]" ..
+			"button_exit[1.7,-0.3;2,1;gohome;Go Home]"
+		minetest.show_formspec(name, "warps:warpstone", formspec)
+	end
+end
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	if formname ~= "warps:warpstone" then
+		return
+	end
+
+	local name = player:get_player_name()
+	local pos = warps.stone_pos[name]
+	if fields.destination then
+		if string.match(fields.destination, "^home_") then
+			minetest.chat_send_player(name, "Illegal name")
+			return false
+		end
+		local meta = minetest.get_meta(pos)
+		meta:set_string("destination", fields.destination)
+		minetest.log("action", name .. " changed warp stone to \"" .. fields.destination .. "\"")
+	elseif fields.sethome then
+		if minetest.is_protected(pos, name) then
+			return
+		end
+		local home = "home_" .. name
+		local h = "created"
+		for i = 1, table.getn(warps) do
+			if warps[i].name == home then
+				table.remove(warps, i)
+				h = "changed"
+				break
+			end
+		end
+		table.insert(warps, {name = home, x = pos.x, y = pos.y, z = pos.z, yaw = player:get_look_yaw(), pitch = player:get_look_pitch()})
+		save()
+		minetest.log("action", name .. " " .. h .. " warp \"" .. home .. "\": " .. pos.x .. ", " .. pos.y .. ", " .. pos.z)
+		minetest.chat_send_player(name, "Your home warp location has been set")
+	elseif fields.gohome then
+		warp_queue_add(player, "home_" .. name)
+	end
+end)
+
+
+-- WARP STONES
+
+-- Amethyst
 minetest.register_abm({
 	nodenames = {"warps:warpstone_amethyst"},
 	interval = 1.5,
@@ -263,6 +332,7 @@ minetest.register_abm({
 	end})
 
 minetest.register_alias("warps:warpstone", "warps:warpstone_amethyst")
+
 minetest.register_node("warps:warpstone_amethyst", {
 	visual = "mesh",
 	mesh = "warps_warpstone.obj",
@@ -280,43 +350,51 @@ minetest.register_node("warps:warpstone_amethyst", {
 		type = "fixed",
 		fixed = {-0.25, -0.5, -0.25,  0.25, 0.5, 0.25}
 	},
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec",
-			"field[destination;Warp Destination;]")
-		meta:set_string("infotext", "Uninitialized Warp Stone")
-	end,
-	on_receive_fields = function(pos, formname, fields, sender)
-		if not minetest.check_player_privs(sender:get_player_name(), {warp_admin = true}) then
-			minetest.chat_send_player(sender:get_player_name(), "You do not have permission to modify warp stones")
-			return false
-		end
-		if not fields.destination then
-			return
-		end
-		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec",
-			"field[destination;Warp Destination;" .. fields.destination .. "]")
-		meta:set_string("infotext", "Warp stone to " .. fields.destination)
-		meta:set_string("warps_destination", fields.destination)
-		minetest.log("action", sender:get_player_name() .. " changed warp stone to \"" .. fields.destination .. "\"")
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		warps.stone_pos[clicker:get_player_name()] = pos
+		warp_menu(pos, node, clicker, itemstack, pointed_thing)
 	end,
 	on_punch = function(pos, node, puncher, pointed_thing)
-		if puncher:get_player_control().sneak and minetest.check_player_privs(puncher:get_player_name(), {warp_admin = true}) then -- make sneak set name, otherwise don't
-			minetest.remove_node(pos)
-			minetest.chat_send_player(puncher:get_player_name(), "Warp stone removed!")
-			return
-		end
 		local meta = minetest.get_meta(pos)
-		local destination = meta:get_string("warps_destination")
-		if destination == "" then
-			minetest.chat_send_player(puncher:get_player_name(), "Unknown warp location for this warp stone, cannot warp!")
-			return false
+		local destination = meta:get_string("destination")
+		if destination ~= "" then
+			warp_queue_add(puncher, destination)
 		end
-		warp_queue_add(puncher, destination)
-	end,
+	end
 })
 
+-- Crystal
+minetest.register_node("warps:warpstone_crystal", {
+	visual = "mesh",
+	mesh = "warps_warpstone.obj",
+	description = "Crystal Warp Stone",
+	tiles = {"warps_crystal_warpstone.png"},
+	drawtype = "mesh",
+	wield_scale = {x = 1.5, y = 1.5, z = 1.5},
+	sunlight_propagates = true,
+	walkable = false,
+	paramtype = "light",
+	groups = {cracky = default.dig.glass},
+	light_source = 13,
+	sounds = default.node_sound_glass_defaults(),
+	selection_box = {
+		type = "fixed",
+		fixed = {-0.25, -0.5, -0.25,  0.25, 0.5, 0.25}
+	},
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		warps.stone_pos[clicker:get_player_name()] = pos
+		warp_menu(pos, node, clicker, itemstack, pointed_thing)
+	end,
+	on_punch = function(pos, node, puncher, pointed_thing)
+		local meta = minetest.get_meta(pos)
+		local destination = meta:get_string("destination")
+		if destination ~= "" then
+			warp_queue_add(puncher, destination)
+		end
+	end
+})
+
+-- Emerald
 minetest.register_node("warps:warpstone_emerald", {
 	visual = "mesh",
 	mesh = "warps_warpstone.obj",
@@ -334,31 +412,19 @@ minetest.register_node("warps:warpstone_emerald", {
 		type = "fixed",
 		fixed = {-0.25, -0.5, -0.25,  0.25, 0.5, 0.25}
 	},
-	after_place_node = function(pos, placer, itemstack, pointed_thing) -- Make on_rightclick with formspec
-		local name = placer:get_player_name()
-		local home = "home_" .. name
-		local h = "created"
-		for i = 1,table.getn(warps) do
-			if warps[i].name == home then
-				table.remove(warps, i)
-				h = "changed"
-				break
-			end
-		end
-		local pos = pointed_thing.above --placer:getpos()
-		table.insert(warps, {name = home, x = pos.x, y = pos.y, z = pos.z, yaw = placer:get_look_yaw(), pitch = placer:get_look_pitch()})
-		save()
-		minetest.log("action", name .. " " .. h .. " warp \"" .. home .. "\": " .. pos.x .. ", " .. pos.y .. ", " .. pos.z)
-		minetest.chat_send_player(name, "Your home warp location has been set.")
-	end,
 	on_use = function(itemstack, user, pointed_thing)
 		warp_queue_add(user, "home_" .. user:get_player_name())
 	end,
 	on_punch = function(pos, node, puncher, pointed_thing)
 		warp_queue_add(puncher, "home_" .. puncher:get_player_name())
 	end,
+	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+		warps.stone_pos[clicker:get_player_name()] = pos
+		warp_menu(pos, node, clicker, itemstack, pointed_thing)
+	end
 })
 
+-- Ruby
 minetest.register_node("warps:warpstone_ruby", {
 	visual = "mesh",
 	mesh = "warps_warpstone.obj",
@@ -380,81 +446,11 @@ minetest.register_node("warps:warpstone_ruby", {
 		warp_queue_add(user, "Spawn")
 	end,
 	on_punch = function(pos, node, puncher, pointed_thingo)
-		if puncher:get_player_control().sneak and minetest.check_player_privs(puncher:get_player_name(), {warp_admin = true}) then -- TODO: make sneak set name, otherwise don't
-			minetest.remove_node(pos)
-			minetest.chat_send_player(puncher:get_player_name(), "Warp stone removed!")
-			return
-		end
-		--[[
-		local meta = minetest.get_meta(pos)
-		local destination = meta:get_string("warps_destination")
-		if destination == "" then
-			minetest.chat_send_player(puncher:get_player_name(), "Unknown warp location for this warp stone, cannot warp!")
-			return false
-		end
-		--]]
 		warp_queue_add(puncher, "Spawn")
-	end,
-})
-
-minetest.register_node("warps:warpstone_crystal", {
-	visual = "mesh",
-	mesh = "warps_warpstone.obj",
-	description = "Crystal Warp Stone",
-	tiles = {"warps_crystal_warpstone.png"},
-	drawtype = "mesh",
-	--use_texture_alpha = true,
-	wield_scale = {x = 1.5, y = 1.5, z = 1.5},
-	sunlight_propagates = true,
-	walkable = false,
-	paramtype = "light",
-	groups = {cracky = default.dig.glass},
-	light_source = 13,
-	sounds = default.node_sound_glass_defaults(),
-	--on_rotate =
-	selection_box = {
-		type = "fixed",
-		fixed = {-0.25, -0.5, -0.25,  0.25, 0.5, 0.25}
-	},
-	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec",
-			"field[destination;Warp Destination;]")
-		meta:set_string("infotext", "Uninitialized Warp Stone")
-	end,
-	on_receive_fields = function(pos, formname, fields, sender)
-		if not minetest.check_player_privs(sender:get_player_name(), {warp_admin = true}) then
-			minetest.chat_send_player(sender:get_player_name(), "You do not have permission to modify warp stones")
-			return false
-		end
-		if not fields.destination then
-			return
-		end
-		local meta = minetest.get_meta(pos)
-		meta:set_string("formspec",
-			"field[destination;Warp Destination;" .. fields.destination .. "]")
-		meta:set_string("infotext", "Warp stone to " .. fields.destination)
-		meta:set_string("warps_destination", fields.destination)
-		minetest.log("action", sender:get_player_name() .. " changed warp stone to \"" .. fields.destination .. "\"")
-	end,
-	on_punch = function(pos, node, puncher, pointed_thing)
-		if puncher:get_player_control().sneak and minetest.check_player_privs(puncher:get_player_name(), {warp_admin = true}) then -- make sneak set name, otherwise don't
-			minetest.remove_node(pos)
-			minetest.chat_send_player(puncher:get_player_name(), "Warp stone removed!")
-			return
-		end
-		local meta = minetest.get_meta(pos)
-		local destination = meta:get_string("warps_destination")
-		if destination == "" then
-			minetest.chat_send_player(puncher:get_player_name(), "Unknown warp location for this warp stone, cannot warp!")
-			return false
-		end
-		warp_queue_add(puncher, destination)
 	end
 })
 
-
-
+-- Anti-PvP
 minetest.register_node("warps:warpstone_mese", {
 	visual = "mesh",
 	mesh = "warps_warpstone.obj",
@@ -474,6 +470,17 @@ minetest.register_node("warps:warpstone_mese", {
 	}
 })
 
+minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
+--[[	if player:get_weilded_item():get_name() == "warps:warpstone_mese" then
+		hunger.poisenp(1.0, 5, 0, hitter)
+		return true
+	end--]]
+end)
+
 -- load existing warps
 load()
 
+-- clear warpstone position
+minetest.register_on_leaveplayer(function(player)
+	warps.stone_pos[player:get_player_name()] = nil
+end)
