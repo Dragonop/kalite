@@ -325,11 +325,11 @@ minetest.register_abm({
 		if hand:get_name() == "warps:warpstone_amethyst" then
 			-- Automatically go to next warp
 			local meta = minetest.get_meta(pos)
-			--print(dump(meta:get_string("warps_destination")))
 			warp(v, meta:get_string("destination"))
 		end
 	    end
-	end})
+	end
+})
 
 minetest.register_alias("warps:warpstone", "warps:warpstone_amethyst")
 
@@ -381,6 +381,13 @@ minetest.register_node("warps:warpstone_crystal", {
 		type = "fixed",
 		fixed = {-0.25, -0.5, -0.25,  0.25, 0.5, 0.25}
 	},
+	on_use = function(itemstack, user, pointed_thing)
+		warp_queue_add(user, "SkyWorld")
+	end,
+	on_punch = function(pos, node, puncher, pointed_thingo)
+		warp_queue_add(puncher, "SkyWorld")
+	end
+	--[[
 	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
 		warps.stone_pos[clicker:get_player_name()] = pos
 		warp_menu(pos, node, clicker, itemstack, pointed_thing)
@@ -392,6 +399,7 @@ minetest.register_node("warps:warpstone_crystal", {
 			warp_queue_add(puncher, destination)
 		end
 	end
+	--]]
 })
 
 -- Emerald
