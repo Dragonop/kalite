@@ -45,7 +45,7 @@ local warp = function(player, dest)
 		end
 	end
 	if string.match(dest, "home_" .. name) then
-		minetest.chat_send_player(name .. "No home set")
+		minetest.chat_send_player(name, "No home set")
 	end
 	minetest.chat_send_player(name, "Unknown warp \"" .. dest .. "\"")
 end
