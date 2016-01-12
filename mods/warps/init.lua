@@ -326,7 +326,7 @@ minetest.register_abm({
 			-- Automatically go to next warp
 			local meta = minetest.get_meta(pos)
 			--print(dump(meta:get_string("warps_destination")))
-			warp(v, meta:get_string("warps_destination"))
+			warp(v, meta:get_string("destination"))
 		end
 	    end
 	end})
