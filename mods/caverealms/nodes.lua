@@ -135,7 +135,7 @@ minetest.register_node("caverealms:thin_ice", {
 	description = "Thin Ice",
 	tiles = {"caverealms_thin_ice.png"},
 	is_ground_content = true,
-	groups = {cracky = default.dig.glass},
+	groups = {cracky = default.dig.glass, puts_out_fire = 1},
 	sounds = default.node_sound_glass_defaults(),
 	use_texture_alpha = true,
 	drawtype = "glasslike",
