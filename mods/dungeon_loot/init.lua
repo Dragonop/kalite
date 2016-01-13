@@ -19,7 +19,7 @@
 -- 3. This notice may not be removed or altered from any source distribution.
 --
 
--- Modifications by jas
+-- Modifications by James Stevenson
 
 local chest_stuff = {
 	{name="default:apple", max = 3},
