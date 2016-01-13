@@ -387,7 +387,6 @@ stairs.register_shape("wood", "default:wood",
 		"Wooden Outerstair",
 		default.node_sound_wood_defaults())
 
---[[
 stairs.register_shape("junglewood", "default:junglewood",
 		{snappy = 2, choppy = 2, oddly_breakable_by_hand = 2, flammable = 3},
 		{"default_junglewood.png"},
@@ -396,7 +395,6 @@ stairs.register_shape("junglewood", "default:junglewood",
 		"Junglewood Innerstair",
 		"Junglewood Outerstair",
 		default.node_sound_wood_defaults())
---]]
 
 --[[
 stairs.register_shape("pine_wood", "default:pine_wood",
@@ -626,3 +624,13 @@ stairs.register_shape("glow_amethyst", "caverealms:glow_amethyst",
 
 
 -- Ores Plus
+
+-- Cobble Compression
+stairs.register_shape("cobble_compressed", "cobble_compression:compressed",
+	{cracky = default.dig.cobble},
+	{"cc_node_01.png"},
+	"Compressed Cobble Stair",
+	"Compressed Cobble Slab",
+	"Compressed Cobble Innerstair",
+	"Compressed Cobble Outerstair",
+	default.node_sound_stone_defaults())
