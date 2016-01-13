@@ -182,6 +182,7 @@ minetest.register_abm({
 
 -- Enable the following ABMs according to 'disable fire' setting
 
+--[[
 if minetest.setting_getbool("disable_fire") then
 
 	-- Remove basic flames only
@@ -197,6 +198,7 @@ if minetest.setting_getbool("disable_fire") then
 	})
 
 else
+--]]
 
 	-- Ignite neighboring nodes, add basic flames
 
@@ -208,7 +210,9 @@ else
 		catch_up = false,
 		action = function(p0, node, _, _)
 			-- If there is water or stuff like that around node, don't ignite
-			if fire.flame_should_extinguish(p0) then
+			-- Don't ignite if y > 14400 (SkyWorld).
+			if p0.y > 14400 or
+					fire.flame_should_extinguish(p0) then
 				return
 			end
 			local p = fire.find_pos_for_flame_around(p0)
@@ -242,7 +246,7 @@ else
 		end,
 	})
 
-end
+--end
 
 
 -- Rarely ignite things from far
