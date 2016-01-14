@@ -277,7 +277,10 @@ function hunger.item_eat(hunger_change, replace_with_item, poisen, heal, sound)
     end
 end
 
+
 -- This doesn't belong here?
+-- FIXME FIXME FIXME
+
 minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
 	if not hitter:is_player() then return end
 	local owner = minetest.setting_get("name")
@@ -290,16 +293,20 @@ minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, 
 			return false
 		end
 		local pos = player:getpos()
+		--[[
 		local positions = minetest.find_nodes_in_area(
 			{x = pos.x - 5, y = pos.y - 5, z = pos.z - 5},
 			{x = pos.x + 5, y = pos.y + 5, z = pos.z + 5},
 			{"warps:warpstone_mese"})
-		if positions[1] then -- Can only hope this is strong enough of a check.
+		if positions[1] then
+		--]]	-- Can only hope this is strong enough of a check.
 			-- TODO: Make functions from some mods available to other mods
 			-- For example, the warping functionality of warps mod
 			-- Plus if hunger is available, and poisen function, then
 			-- i can move this chunk back to kalite mod.
 			-- Until then, I will hard code position of jail, I guess.
+		if minetest.find_node_near(pos, 8, {"warps:warpstone_mese"}) then
+			print("mese warpstone")
 			hitter:setpos({x = 0, y = -27000, z = 0})
 	 		hud.change_item(hitter, "hunger", {text = "hunger_statbar_poisen.png"})
 			poisenp(1.0, 5, 0, hitter)
