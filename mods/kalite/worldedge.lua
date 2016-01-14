@@ -1,8 +1,11 @@
 minetest.register_node("kalite:plastic_grass", {
 	description = "Plastic Grass",
 	tiles = {"default_grass.png"},
-	groups = {cracky = default.dig.cobble}
+	groups = {cracky=default.dig.cobble, soil=3}
 })
+
+
+-- Map Generation
 
 local c_cloud = minetest.get_content_id("default:cloud")
 local c_plastic_grass = minetest.get_content_id("kalite:plastic_grass")
@@ -65,7 +68,12 @@ minetest.register_on_generated(function(minp, maxp, seed)
 end)
 
 
--- Black sky in caves:
+-- Black sky in caves
+-- Damage players trying to dig to the bottom
+-- TODO Damage players at world's edge.  Possibly
+-- teleport to the other side.  Shouldn't have
+-- to worry about the top, but put that in there
+-- for completeness.
 
 local dur = 0
 

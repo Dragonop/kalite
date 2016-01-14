@@ -105,6 +105,10 @@ function default.drop_node_inventory()
 	end
 end
 
+-- FIXME this is bugged when a player is (timed-out?)
+-- and a kick will result in a crash
+-- Something about inv being nil?
+
 function default.drop_player_inventory(pos, digger)
 		pos.y = pos.y+1.5
 		local inv = digger:get_inventory()
@@ -371,10 +375,13 @@ minetest.register_abm({
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode)
 	if placer:is_player() then 
-		if newnode.name == "default:sapling" then
-			if not minetest.find_node_near(pos, 8, {"group:water"}) then
-				minetest.set_node(pos, oldnode)
-				minetest.add_item(pos, {name="default:sapling"})
+		if newnode.name == "default:sapling" or
+				newnode.name == "default:junglesapling" then
+			if pos.y < 14400 then
+				if not minetest.find_node_near(pos, 8, {"group:water"}) then
+					minetest.set_node(pos, oldnode)
+					minetest.add_item(pos, newnode) --{name="default:sapling"})
+				end
 			end
 		end
 	end
