@@ -59,19 +59,17 @@ minetest.register_node("kalite:wardrobe", {
 
 		-- FIXME The following will likely go into get_skin() function
 
-		--[[
-		-- Didn't work.
+		---[[
 		for _, v in pairs(skin_db) do
 			if current_skin == "character_" .. v[1] .. ".png" then
 				skin = v[1]
-			else
-				skin = "dusty" -- We shouldn't get here?
-				print("You are here.")
+			elseif not skin then -- == "character.png" then
+				skin = "dusty"
 			end
 		end
 		--]]
 
-		---[[
+		--[[
 		if current_skin == "character_dusty.png" then
 			skin = "dusty"
 		elseif current_skin == "character_sam.png" then
@@ -150,6 +148,8 @@ minetest.register_craftitem("kalite:skin_femsam", {
 minetest.register_on_joinplayer(function(player, _)
 	local skin_inv = player:get_inventory()
 	skin_inv:set_size("skin", 1)
+	-- FIXME Old players missing the skin inventory do not receive their skin
+
 	-- FIXME Get the following out of skin_db table
 	if skin_inv:contains_item("skin", {name = "kalite:skin_sam"}) then
 		player:set_properties({textures = {"character_sam.png"}})
