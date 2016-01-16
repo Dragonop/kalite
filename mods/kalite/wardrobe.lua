@@ -1,5 +1,13 @@
 kalite.wardrobe = {}
 
+-- TODO Fill this from skins.txt
+local skin_db = {
+	"dusty",
+	"sam",
+	"dclover",
+	"femsam"
+}
+
 -- Functions
 
 local function get_skin(player)
@@ -48,6 +56,7 @@ minetest.register_node("kalite:wardrobe", {
 		kalite.wardrobe[name] = spos
 		local skin
 		local current_skin = get_skin(clicker)
+		-- FIXME The following will likely go into get_skin() function
 		if current_skin == "character_dusty.png" then
 			skin = "dusty"
 		elseif current_skin == "character_sam.png" then
@@ -81,6 +90,7 @@ minetest.register_craft({
 
 -- Craftitems
 
+-- FIXME Get all this from skin_db table
 minetest.register_craftitem("kalite:skin_sam", {
 	description = "Sam",
 	inventory_image = "kalite_skin_sam.png",
@@ -108,11 +118,13 @@ minetest.register_craftitem("kalite:skin_femsam", {
 	groups = {skin = 1},
 	stack_max = 1,
 })
+
 -- Callbacks?
 
 minetest.register_on_joinplayer(function(player, _)
 	local skin_inv = player:get_inventory()
 	skin_inv:set_size("skin", 1)
+	-- FIXME Get the following out of skin_db table
 	if skin_inv:contains_item("skin", {name = "kalite:skin_sam"}) then
 		player:set_properties({textures = {"character_sam.png"}})
 	elseif skin_inv:contains_item("skin", {name = "kalite:skin_dusty"}) then
@@ -136,6 +148,7 @@ minetest.register_on_joinplayer(function(player, _)
 		end,
 		on_put = function(inv, listname, index, stack, player)
 			local name = player:get_player_name()
+			-- FIXME Obtain from skin_db
 			if stack:get_name() == "kalite:skin_sam" then
 				player:set_properties({textures = {"character_sam.png"}})
 				skin_inv:set_stack("skin", 1, {name = "kalite:skin_sam"})
@@ -158,6 +171,7 @@ minetest.register_on_joinplayer(function(player, _)
 		end,
 	})
 	skin:set_size("main", 1)
+	-- FIXME another read from skin_db chunk
 	if skin_inv:contains_item("skin", {name = "kalite:skin_sam"}) then
 		skin:set_stack("main", 1, {name = "kalite:skin_sam"})
 	elseif skin_inv:contains_item("skin", {name = "kalite:skin_dusty"}) then
