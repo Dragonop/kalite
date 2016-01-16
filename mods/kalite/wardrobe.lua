@@ -1,12 +1,44 @@
 kalite.wardrobe = {}
 
 -- TODO Fill this from skins.txt
+--[[
 local skin_db = {
 	{"dusty", "Dusty"},
 	{"sam", "Sam"},
 	{"dclover", "DC Boy"},
-	{"femsam", "Female Sam"}
+	{"femsam", "Female Sam"},
+	{"crazyginger", "Crazy Ginger"}
 }
+--]]
+
+local skin_db = {}
+
+local load = function ()
+	local fh, err = io.open(minetest.get_worldpath() .. "/skins.txt", "r")
+	if err then
+		skin_db = {{"dusty", "Dusty"}, {"sam", "Sam"}}
+		minetest.log("action", table.getn(skin_db) .. " skins loaded")
+		return
+	end
+	while true do
+		local line = fh:read()
+		if line == nil then
+			break
+		end
+		local paramlist = string.split(line, ":") -- " "
+		local w = {
+			paramlist[1],
+			paramlist[2]
+		}
+		table.insert(skin_db, w)
+	end
+	fh:close()
+	minetest.log("action", table.getn(skin_db) .. " skins loaded.")
+end
+
+load()
+
+print(dump(skin_db))
 
 -- Functions
 

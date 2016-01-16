@@ -1,0 +1,12 @@
+In the world directory make a file "skins.txt"
+
+In the file specify the skins to add
+Format:
+file:Skin Name
+^ do not add the file's extension, .png
+
+Where file is a file in textures/ with the name kalite_skin_[file]
+and character_[file]
+
+If not specified, skins.txt will be created with the default
+skins, Dusty and Sam.
