@@ -150,7 +150,19 @@ minetest.register_on_joinplayer(function(player, _)
 	skin_inv:set_size("skin", 1)
 	-- FIXME Old players missing the skin inventory do not receive their skin
 
+	---[[
+	for _, v in pairs(skin_db) do
+		if skin_inv:contains_item("skin", {name = "kalite:skin_" .. v[1]}) then
+			player:set_properties({textures = {"character_" .. v[1] .. ".png"}})
+		--else
+			--player:set_properties({textures = {"character_dusty.png"}})
+		end
+	end
+	--]]
+
+
 	-- FIXME Get the following out of skin_db table
+	--[[
 	if skin_inv:contains_item("skin", {name = "kalite:skin_sam"}) then
 		player:set_properties({textures = {"character_sam.png"}})
 	elseif skin_inv:contains_item("skin", {name = "kalite:skin_dusty"}) then
@@ -160,6 +172,7 @@ minetest.register_on_joinplayer(function(player, _)
 	elseif skin_inv:contains_item("skin", {name = "kalite:skin_femsam"}) then
 		player:set_properties({textures = {"character_femsam.png"}})
 	end
+	--]]
 
 	local skin = minetest.create_detached_inventory("skin_" .. player:get_player_name(), {
 		allow_put = function(inv, listname, index, stack, player)
@@ -174,7 +187,19 @@ minetest.register_on_joinplayer(function(player, _)
 		end,
 		on_put = function(inv, listname, index, stack, player)
 			local name = player:get_player_name()
+
+			for _, v in pairs(skin_db) do
+				if stack:get_name() == "kalite:skin_" .. v[1] then
+					player:set_properties({textures = {"character_" .. v[1] .. ".png"}})
+					skin_inv:set_stack("skin", 1, {name = "kalite:skin_" .. v[1]})
+					return show_formspec(name, v[1], kalite.wardrobe[player:get_player_name()])
+				end
+			end
+
+			--return 0
+
 			-- FIXME Obtain from skin_db
+			--[[
 			if stack:get_name() == "kalite:skin_sam" then
 				player:set_properties({textures = {"character_sam.png"}})
 				skin_inv:set_stack("skin", 1, {name = "kalite:skin_sam"})
@@ -194,10 +219,19 @@ minetest.register_on_joinplayer(function(player, _)
 			else
 				return 0
 			end
-		end,
+			--]]
+		end
 	})
 	skin:set_size("main", 1)
+
+	for _, v in pairs(skin_db) do
+		if skin_inv:contains_item("skin", {name = "kalite:skin_" .. v[1]}) then
+			skin:set_stack("main", 1, {name = "kalite:skin_" .. v[1]})
+		end
+	end
+
 	-- FIXME another read from skin_db chunk
+	--[[
 	if skin_inv:contains_item("skin", {name = "kalite:skin_sam"}) then
 		skin:set_stack("main", 1, {name = "kalite:skin_sam"})
 	elseif skin_inv:contains_item("skin", {name = "kalite:skin_dusty"}) then
@@ -207,6 +241,7 @@ minetest.register_on_joinplayer(function(player, _)
 	elseif skin_inv:contains_item("skin", {name = "kalite:skin_femsam"}) then
 		skin:set_stack("main", 1, {name = "kalite:skin_femsam"})
 	end
+	--]]
 end)
 
 minetest.register_on_leaveplayer(function(player)
