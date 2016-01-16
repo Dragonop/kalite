@@ -2,10 +2,10 @@ kalite.wardrobe = {}
 
 -- TODO Fill this from skins.txt
 local skin_db = {
-	"dusty",
-	"sam",
-	"dclover",
-	"femsam"
+	{"dusty", "Dusty"},
+	{"sam", "Sam"},
+	{"dclover", "DC Boy"},
+	{"femsam", "Female Sam"}
 }
 
 -- Functions
@@ -56,7 +56,22 @@ minetest.register_node("kalite:wardrobe", {
 		kalite.wardrobe[name] = spos
 		local skin
 		local current_skin = get_skin(clicker)
+
 		-- FIXME The following will likely go into get_skin() function
+
+		--[[
+		-- Didn't work.
+		for _, v in pairs(skin_db) do
+			if current_skin == "character_" .. v[1] .. ".png" then
+				skin = v[1]
+			else
+				skin = "dusty" -- We shouldn't get here?
+				print("You are here.")
+			end
+		end
+		--]]
+
+		---[[
 		if current_skin == "character_dusty.png" then
 			skin = "dusty"
 		elseif current_skin == "character_sam.png" then
@@ -68,6 +83,8 @@ minetest.register_node("kalite:wardrobe", {
 		else
 			skin = "dusty"
 		end
+		--]]
+
 		show_formspec(name, skin, spos)
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
@@ -90,14 +107,22 @@ minetest.register_craft({
 
 -- Craftitems
 
--- FIXME Get all this from skin_db table
+for _, v in pairs(skin_db) do
+	minetest.register_craftitem("kalite:skin_" .. v[1], {
+		description = v[2],
+		inventory_image = "kalite_skin_" .. v[1] .. ".png",
+		groups = {skin = 1},
+		stack_max = 1
+	})
+end
+
+--[[
 minetest.register_craftitem("kalite:skin_sam", {
 	description = "Sam",
 	inventory_image = "kalite_skin_sam.png",
 	groups = {skin = 1},
 	stack_max = 1,
 })
-
 minetest.register_craftitem("kalite:skin_dusty", {
 	description = "Dusty",
 	inventory_image = "kalite_skin_dusty.png",
@@ -118,6 +143,7 @@ minetest.register_craftitem("kalite:skin_femsam", {
 	groups = {skin = 1},
 	stack_max = 1,
 })
+--]]
 
 -- Callbacks?
 
