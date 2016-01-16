@@ -54,6 +54,8 @@ minetest.register_node("kalite:wardrobe", {
 			skin = "sam"
 		elseif current_skin == "character_dclover.png" then
 			skin = "dclover"
+		elseif current_skin == "character_femsam.png" then
+			skin = "femsam"
 		else
 			skin = "dusty"
 		end
@@ -100,6 +102,12 @@ minetest.register_craftitem("kalite:skin_dclover", {
 	stack_max = 1,
 })
 
+minetest.register_craftitem("kalite:skin_femsam", {
+	description = "Female Sam",
+	inventory_image = "kalite_skin_femsam.png",
+	groups = {skin = 1},
+	stack_max = 1,
+})
 -- Callbacks?
 
 minetest.register_on_joinplayer(function(player, _)
@@ -111,6 +119,8 @@ minetest.register_on_joinplayer(function(player, _)
 		player:set_properties({textures = {"character_dusty.png"}})
 	elseif skin_inv:contains_item("skin", {name = "kalite:skin_dclover"}) then
 		player:set_properties({textures = {"character_dclover.png"}})
+	elseif skin_inv:contains_item("skin", {name = "kalite:skin_femsam"}) then
+		player:set_properties({textures = {"character_femsam.png"}})
 	end
 
 	local skin = minetest.create_detached_inventory("skin_" .. player:get_player_name(), {
@@ -138,6 +148,10 @@ minetest.register_on_joinplayer(function(player, _)
 				player:set_properties({textures = {"character_dclover.png"}})
 				skin_inv:set_stack("skin", 1, {name = "kalite:skin_dclover"})
 				show_formspec(name, "dclover", kalite.wardrobe[player:get_player_name()])
+			elseif stack:get_name() == "kalite:skin_femsam" then
+				player:set_properties({textures = {"character_femsam.png"}})
+				skin_inv:set_stack("skin", 1, {name = "kalite:skin_femsam"})
+				show_formspec(name, "femsam", kalite.wardrobe[player:get_player_name()])
 			else
 				return 0
 			end
@@ -150,6 +164,8 @@ minetest.register_on_joinplayer(function(player, _)
 		skin:set_stack("main", 1, {name = "kalite:skin_dusty"})
 	elseif skin_inv:contains_item("skin", {name = "kalite:skin_dclover"}) then
 		skin:set_stack("main", 1, {name = "kalite:skin_dclover"})
+	elseif skin_inv:contains_item("skin", {name = "kalite:skin_femsam"}) then
+		skin:set_stack("main", 1, {name = "kalite:skin_femsam"})
 	end
 end)
 
