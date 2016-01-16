@@ -8,5 +8,5 @@ file:Skin Name
 Where file is a file in textures/ with the name kalite_skin_[file]
 and character_[file]
 
-If not specified, skins.txt will be created with the default
-skins, Dusty and Sam.
+If skins.txt is not present, only the default Dusty and Sam skins
+will be available.

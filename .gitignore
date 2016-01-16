@@ -1,2 +1,8 @@
 *.bak
 *.swp
+kalite_skin_*.png
+character_*.png
+!kalite_skin_sam.png
+!kalite_skin_dusty.png
+!character_sam.png
+!character_dusty.png
