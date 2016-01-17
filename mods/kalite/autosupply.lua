@@ -14,30 +14,35 @@ minetest.register_node("kalite:dirt", {
 	stack_max=40
 })
 
+-- Tree
 minetest.register_abm({
         nodenames = {"kalite:dirt"},
         interval = 10,
-        chance = 50,
+        chance = 1,
         action = function(pos, node)
-		local na = minetest.get_node({x=pos.x, y=pos.y+1, z=pos.z}).name
-		if na ~= "air" then
-			if na ~= "default:tree" then
-				minetest.remove_node({x=pos.x, y=pos.y+1, z=pos.z})
-			end
-			return
+		local igniters = minetest.find_node_near(pos, 9, "group:igniter")
+		if igniters then
+			minetest.remove_node(igniters)
 		end
-
-		local ppos = {x=pos.x, y=pos.y+1, z=pos.z}
-
-                minetest.log("action", "A sapling grows into a tree at "..minetest.pos_to_string(pos))
-                local vm = minetest.get_voxel_manip()
-                local minp, maxp = vm:read_from_map({x=pos.x-16, y=pos.y+1, z=pos.z-16}, {x=pos.x+16, y=pos.y+16, z=pos.z+16})
-                local a = VoxelArea:new{MinEdge=minp, MaxEdge=maxp}
-                local data = vm:get_data()
-                default.grow_tree(data, a, ppos, math.random(1, 4) == 1, math.random(1,100000))
-                vm:set_data(data)
-                vm:write_to_map(data)
-                vm:update_map()
+		local ppos = {x = pos.x, y = pos.y+1, z = pos.z}
+		local na = minetest.get_node(ppos).name
+		if na ~= "default:tree" then
+			minetest.after(0.1, function ()
+				if math.random(1, 4) > 1 then
+					return
+				end
+		
+				local vm = minetest.get_voxel_manip()
+				local minp, maxp = vm:read_from_map({x=pos.x-16, y=pos.y+1, z=pos.z-16}, {x=pos.x+16, y=pos.y+16, z=pos.z+16})
+				local a = VoxelArea:new{MinEdge=minp, MaxEdge=maxp}
+				local data = vm:get_data()
+				default.grow_tree(data, a, ppos, math.random(1, 4) == 1, math.random(1,100000))
+				vm:set_data(data)
+				vm:write_to_map(data)
+				vm:update_map()
+				minetest.log("action", "A sapling grows into a tree at "..minetest.pos_to_string(pos))
+			end)
+		end
         end
 })
 
