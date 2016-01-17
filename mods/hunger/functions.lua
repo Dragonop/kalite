@@ -287,7 +287,7 @@ minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, 
 	--if player:get_player_name() == minetest.setting_get("name") then
 	if player:get_player_name() == owner then
 		return true -- This is fine, a player attacking owner won't bother owner.
-	else
+	elseif damage > 0 then
 		-- if nodes in area match warpstone_mese then do no damage and teleport attacker to jail
 		if hitter:get_player_name() == owner then
 			return false
