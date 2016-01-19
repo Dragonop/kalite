@@ -25,8 +25,8 @@ minetest.register_node("kalite:dirt", {
 
 minetest.register_abm({
         nodenames = {"kalite:dirt"},
-        interval = 50,
-        chance = 4,
+        interval = 240,
+        chance = 20,
         action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -67,8 +67,8 @@ minetest.register_node("kalite:dirt2", {
 
 minetest.register_abm({
 	nodenames = {"kalite:dirt2"},
-	interval = 25,
-	chance = 2,
+	interval = 120,
+	chance = 10,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -98,8 +98,8 @@ minetest.register_node("kalite:dirt3", {
 
 minetest.register_abm({
 	nodenames = {"kalite:dirt3"},
-	interval = 25,
-	chance = 2,
+	interval = 120,
+	chance = 10,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -131,8 +131,8 @@ minetest.register_node("kalite:sand1", {
 
 minetest.register_abm({
 	nodenames = {"kalite:sand1"},
-	interval = 25,
-	chance = 2,
+	interval = 120,
+	chance = 10,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -163,8 +163,8 @@ minetest.register_node("kalite:sand2", {
 
 minetest.register_abm({
 	nodenames = {"kalite:sand2"},
-	interval = 25,
-	chance = 2,
+	interval = 120,
+	chance = 10,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -205,8 +205,8 @@ minetest.register_node("kalite:grass1", {
 
 minetest.register_abm({
 	nodenames = {"kalite:grass1"},
-	interval = 25,
-	chance = 2,
+	interval = 120,
+	chance = 10,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -244,8 +244,8 @@ minetest.register_node("kalite:grass2", {
 
 minetest.register_abm({
 	nodenames = {"kalite:grass2"},
-	interval = 25,
-	chance = 2,
+	interval = 120,
+	chance = 10,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -283,8 +283,8 @@ minetest.register_node("kalite:grass3", {
 
 minetest.register_abm({
 	nodenames = {"kalite:grass3"},
-	interval = 25,
-	chance = 2,
+	interval = 120,
+	chance = 10,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -322,8 +322,8 @@ minetest.register_node("kalite:grass4", {
 
 minetest.register_abm({
 	nodenames = {"kalite:grass4"},
-	interval = 25,
-	chance = 2,
+	interval = 120,
+	chance = 10,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -361,8 +361,8 @@ minetest.register_node("kalite:grass5", {
 
 minetest.register_abm({
 	nodenames = {"kalite:grass5"},
-	interval = 25,
-	chance = 2,
+	interval = 120,
+	chance = 10,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -400,8 +400,8 @@ minetest.register_node("kalite:grass6", {
 
 minetest.register_abm({
 	nodenames = {"kalite:grass6"},
-	interval = 25,
-	chance = 2,
+	interval = 120,
+	chance = 10,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
