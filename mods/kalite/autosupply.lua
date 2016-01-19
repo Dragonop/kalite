@@ -8,8 +8,10 @@ local function remove_igniters(pos)
 	end
 end
 
+
 -- Tree
-minetest.register_node("kalite:dirt", {
+minetest.register_alias("kalite:dirt", "kalite:dirt_tree")
+minetest.register_node("kalite:dirt_tree", {
 	description = "Dirt (Tree)",
 	tiles = {"default_dry_dirt.png"},
 	is_ground_content = true,
@@ -24,9 +26,9 @@ minetest.register_node("kalite:dirt", {
 })
 
 minetest.register_abm({
-        nodenames = {"kalite:dirt"},
-        interval = 240,
-        chance = 20,
+        nodenames = {"kalite:dirt_tree"},
+        interval = 120,
+        chance = 10,
         action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
@@ -47,6 +49,47 @@ minetest.register_abm({
 					minetest.pos_to_string(pos))
 		end
         end
+})
+
+
+-- Jungle Tree
+minetest.register_node("kalite:dirt_jungletree", {
+	description = "Dirt (Jungle Tree)",
+	tiles = {"default_dry_dirt.png"},
+	is_ground_content = true,
+	groups = {
+		crumbly = default.dig.dirt,
+		soil = 1,
+		not_in_creative_inventory = 1
+	},
+	drop = "default:dry_dirt",
+	sounds = default.node_sound_dirt_defaults(),
+	stack_max = 40
+})
+
+minetest.register_abm({
+	nodenames = {"kalite:dirt_jungletree"},
+	interval = 120,
+	chance = 10,
+	action = function(pos, node)
+		remove_igniters(pos)
+		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
+		local na = minetest.get_node(ppos).name
+		if na ~= "default:jungletree" then
+			local vm = minetest.get_voxel_manip()
+			local minp, maxp = vm:read_from_map(
+				{x = pos.x - 16, y = pos.y + 1, z = pos.z - 16},
+				{x = pos.x + 16, y = pos.y + 16, z = pos.z + 16})
+			local a = VoxelArea:new{MinEdge = minp, MaxEdge = maxp}
+			local data = vm:get_data()
+			default.grow_jungletree(data, a, pos, math.random(1, 100000))
+			vm:set_data(data)
+			vm:write_to_map(data)
+			vm:update_map()
+			minetest.log("action", "A jungle sapling grows into a tree at " ..
+					minetest.pos_to_string(pos))
+		end
+	end
 })
 
 
