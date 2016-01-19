@@ -378,9 +378,13 @@ minetest.register_on_placenode(function(pos, newnode, placer, oldnode)
 		if newnode.name == "default:sapling" or
 				newnode.name == "default:junglesapling" then
 			if pos.y < 14400 then
-				if not minetest.find_node_near(pos, 8, {"group:water"}) then
-					minetest.set_node(pos, oldnode)
-					minetest.add_item(pos, newnode) --{name="default:sapling"})
+				local nu = minetest.get_node({x = pos.x, y = pos.y - 1, z = pos.z}).name
+				if nu == "kalite:dirt_tree" or
+						nu == "kalite:dirt_jungletree" then
+					minetest.set_node(pos, newnode)
+				elseif not minetest.find_node_near(pos, 8, {"group:water"}) then
+					minetest.set_node(pos, oldnode) -- Return old node (probably air)
+					minetest.add_item(pos, newnode) -- Drop item onto ground
 				end
 			end
 		end

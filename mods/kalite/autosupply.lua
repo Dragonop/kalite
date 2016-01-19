@@ -27,26 +27,15 @@ minetest.register_node("kalite:dirt_tree", {
 
 minetest.register_abm({
         nodenames = {"kalite:dirt_tree"},
-        interval = 120,
-        chance = 10,
+        interval = 30,
+        chance = 3,
         action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
 		local na = minetest.get_node(ppos).name
-		if na ~= "default:tree" then
-			local vm = minetest.get_voxel_manip()
-			local minp, maxp = vm:read_from_map(
-				{x = pos.x - 16, y = pos.y + 1, z = pos.z - 16},
-				{x = pos.x + 16, y = pos.y + 16, z = pos.z + 16})
-			local a = VoxelArea:new{MinEdge = minp, MaxEdge = maxp}
-			local data = vm:get_data()
-			default.grow_tree(data, a, ppos, math.random(1, 4) == 1,
-					math.random(1, 100000))
-			vm:set_data(data)
-			vm:write_to_map(data)
-			vm:update_map()
-			minetest.log("action", "A sapling grows into a tree at " ..
-					minetest.pos_to_string(pos))
+		if na ~= "default:tree" and
+				na ~= "default:sapling" then
+			return minetest.set_node(ppos, {name = "default:sapling"})
 		end
         end
 })
@@ -69,25 +58,15 @@ minetest.register_node("kalite:dirt_jungletree", {
 
 minetest.register_abm({
 	nodenames = {"kalite:dirt_jungletree"},
-	interval = 120,
-	chance = 10,
+	interval = 30,
+	chance = 3,
 	action = function(pos, node)
 		remove_igniters(pos)
 		local ppos = {x = pos.x, y = pos.y + 1, z = pos.z}
 		local na = minetest.get_node(ppos).name
-		if na ~= "default:jungletree" then
-			local vm = minetest.get_voxel_manip()
-			local minp, maxp = vm:read_from_map(
-				{x = pos.x - 16, y = pos.y + 1, z = pos.z - 16},
-				{x = pos.x + 16, y = pos.y + 16, z = pos.z + 16})
-			local a = VoxelArea:new{MinEdge = minp, MaxEdge = maxp}
-			local data = vm:get_data()
-			default.grow_jungletree(data, a, pos, math.random(1, 100000))
-			vm:set_data(data)
-			vm:write_to_map(data)
-			vm:update_map()
-			minetest.log("action", "A jungle sapling grows into a tree at " ..
-					minetest.pos_to_string(pos))
+		if na ~= "default:jungletree"
+				and na ~= "default:junglesapling" then
+			return minetest.set_node(ppos, {name = "default:junglesapling"})
 		end
 	end
 })
