@@ -3,12 +3,12 @@
 
 local vessels_shelf_formspec =
 	"size[8,8;]" ..
-	--default.gui_bg ..
 	default.gui_bg_img ..
 	default.gui_slots ..
-	"list[current_name;vessels;0,0.3;8,2;]" ..
-	"button[3,2.5;2,1;lock;Lock]" ..
-	"list[current_player;main;0,3.85;8,1;]" ..
+	"list[current_name;vessels;0,0.3;8,2]" ..
+	"list[current_name;protect;3.5,2.5;1,1]" ..
+	"item_image[3.5,2.5;1,1;protector:protect2]" ..
+	"list[current_player;main;0,3.85;8,1]" ..
 	"list[current_player;main;0,5.08;8,3;8]" ..
 	"listring[current_name;vessels]" ..
 	"listring[current_player;main]" ..
@@ -25,32 +25,63 @@ minetest.register_node("vessels:shelf", {
 	groups = {
 		choppy = default.dig.wood,
 		wood = 1,
-		flammable = 3,
+		flammable = 3
 	},
 	sounds = default.node_sound_wood_defaults(),
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
+		meta:set_string("infotext", "Vessels Shelf")
 		meta:set_string("formspec", vessels_shelf_formspec)
-		meta:set_string("owner", "")
 		local inv = meta:get_inventory()
-		inv:set_size("vessels", 8*2)
+		inv:set_size("vessels", 8 * 2)
+		inv:set_size("protect", 1)
 	end,
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
-		return inv:is_empty("vessels")
+		return inv:is_empty("vessels") and inv:is_empty("protect")
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
 		local meta = minetest.get_meta(pos)
 		local inv = meta:get_inventory()
 		local to_stack = inv:get_stack(listname, index)
+		local name = player:get_player_name()
 		if listname == "vessels" then
-			if minetest.get_item_group(stack:get_name(), "vessel") ~= 0
-					and to_stack:is_empty() then
+			if inv:get_stack("protect", 1):is_empty() then
+				if minetest.get_item_group(stack:get_name(), "vessel") ~= 0
+						and to_stack:is_empty() then
+					return 1
+				else
+					return 0
+				end
+			else
+				if not minetest.is_protected(pos, name) then
+					return 1
+				else
+					return 0
+				end
+			end
+		elseif listname == "protect" then
+			if stack:get_name() == "protector:protect2"
+					and to_stack:is_empty()
+					and not minetest.is_protected(pos, name) then
 				return 1
 			else
 				return 0
 			end
+		end
+	end,
+	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		if not inv:is_empty("protect") then
+			if not minetest.is_protected(pos, player:get_player_name()) then
+				return 1
+			else
+				return 0
+			end
+		else
+			return 1
 		end
 	end,
 	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
@@ -69,16 +100,19 @@ minetest.register_node("vessels:shelf", {
 	end,
 	on_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
 		minetest.log("action", player:get_player_name() ..
-			   " moves stuff in vessels shelf at " .. minetest.pos_to_string(pos))
+			   " moves stuff in vessels shelf at " ..
+			   minetest.pos_to_string(pos))
 	end,
 	on_metadata_inventory_put = function(pos, listname, index, stack, player)
 		minetest.log("action", player:get_player_name() ..
-			   " moves stuff to vessels shelf at " .. minetest.pos_to_string(pos))
+			   " moves stuff to vessels shelf at " ..
+			   minetest.pos_to_string(pos))
 	end,
 	on_metadata_inventory_take = function(pos, listname, index, stack, player)
 		minetest.log("action", player:get_player_name() ..
-			   " takes stuff from vessels shelf at " .. minetest.pos_to_string(pos))
-	end,
+			   " takes stuff from vessels shelf at "
+			   .. minetest.pos_to_string(pos))
+	end
 })
 
 minetest.register_craft({
