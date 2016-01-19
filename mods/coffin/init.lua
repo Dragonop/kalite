@@ -1,24 +1,48 @@
+--[[
+    Copyright 2016 James Stevenson.
+    This file is part of Kalite
+
+    Kalite is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Kalite is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Kalite.  If not, see <http://www.gnu.org/licenses/>.
+--]]
+
 minetest.register_craftitem("coffin:bone", {
 	inventory_image = "coffin_bone.png",
-	stack_max = 60})
+	stack_max = 60
+})
 
 minetest.register_craftitem("coffin:skull", {
 	inventory_image = "coffin_skull.png",
-	stack_max = 60})
+	stack_max = 60
+})
 
 minetest.register_craft({output="default:bone_meal 9",
 	type = "shapeless",
-	recipe = {"coffin:bone"}})
+	recipe = {"coffin:bone"}
+})
 
 minetest.register_craft({output="default:bone_meal 9",
 	type = "shapeless",
-	recipe = {"coffin:skull"}})
+	recipe = {"coffin:skull"}
+})
 
 minetest.register_craft({output="coffin:bones",
 	recipe = {
 		{"coffin:bone", "coffin:bone", "coffin:bone"},
 		{"coffin:bone", "coffin:skull", "coffin:bone"},
-		{"coffin:bone", "coffin:bone", "coffin:bone"}}})
+		{"coffin:bone", "coffin:bone", "coffin:bone"}
+	}
+})
 
 minetest.register_node("coffin:bones", {
 	description = "Bones",
@@ -31,12 +55,39 @@ minetest.register_node("coffin:bones", {
 		"bones_front.png"
 	},
 	paramtype2 = "facedir",
-	groups = {dig_immediate=2},
+	groups = {dig = default.dig.instant},
 	sounds = default.node_sound_dirt_defaults({
-		footstep = {name="default_gravel_footstep", gain=0.5},
-		dug = {name="default_gravel_footstep", gain=1.0},
+		footstep = {name = "default_gravel_footstep", gain = 0.5},
+		dug = {name = "default_gravel_footstep", gain = 1.0},
+	}),
 	stack_max = 40,
-	})
+	can_dig = function(pos, player)
+		return true
+	end,
+	on_punch = function(pos, node, puncher, pointed_thing)
+		local meta = minetest.get_meta(pos)
+		local owner = meta:get_string("owner")
+		if owner then
+			if owner == puncher:get_player_name() then
+				local inv = meta:get_inventory()
+				for i = 1, inv:get_size("main") do
+					local stack = inv:get_stack("main", i)
+					print(stack:get_name())
+					if not stack:is_empty() then
+						print("not empty")
+						local p = {
+							x = pos.x + math.random(0, 5) / 5 - 0.5,
+							y = pos.y + 1,
+							z = pos.z + math.random(0, 5) / 5 - 0.5
+						}
+						minetest.add_item(p, stack)
+					end
+				end
+				minetest.remove_node(pos)
+				minetest.add_item(pos, {name = "coffin:bone"})
+			end
+		end
+	end
 })
 
 minetest.register_node("coffin:gravestone", {
@@ -44,15 +95,14 @@ minetest.register_node("coffin:gravestone", {
 	tiles = {"default_stone.png"},
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = {dig_immediate = 1, cracky = 3},
+	groups = {cracky = default.dig.stone},
 	sounds = default.node_sound_stone_defaults(),
 	drop = "default:cobble",
 	drawtype = "nodebox",
 	node_box = {type = "fixed",
 		fixed = {
-		{-0.5,-0.5,-0.1,0.5,-0.3,0.5},
-		{-0.3,-0.3,0.1,0.3,0.7,0.3},
-
+			{-0.5,-0.5,-0.1,0.5,-0.3,0.5},
+			{-0.3,-0.3,0.1,0.3,0.7,0.3}
 		}
 	}
 })
@@ -72,73 +122,78 @@ minetest.register_node("coffin:coffin", {
 	sounds = default.node_sound_wood_defaults({
 		dug = {name = "ruins_chest_break", gain = 0.6},
 	}),
-	drop = "default:stick 2",
-	after_dig_node = default.drop_node_inventory(),
+	drop = "coffin:bone 2",
+	after_dig_node = default.drop_node_inventory()
 })
 
 minetest.register_alias("bones:bones", "coffin:coffin")
 minetest.register_alias("bones:gravestone", "coffin:gravestone")
 
+dofile(minetest.get_modpath("coffin") .. "/remains.lua"
+-- Coffin and tombstone if not protected and not clouds and not a protector
+-- Bones otherwise
+--[[
 minetest.register_on_dieplayer(function(player)
 	local pos = player:getpos()
-	minetest.after(0.25, function() --0.5
-	if minetest.setting_getbool("creative_mode") then
-		return
-	end
-	
-	--local pos = player:getpos()
-	pos.x = math.floor(pos.x+0.5)
-	pos.y = math.floor(pos.y-0.5)
-	pos.z = math.floor(pos.z+0.5)
 	local param2 = minetest.dir_to_facedir(player:get_look_dir())
 	
 	local nn = minetest.get_node(pos).name
-	print(nn)
-	if minetest.is_protected(pos, player:get_player_name()) or
-	    nn == "default:cloud" then
-		default.drop_player_inventory(pos, player)
-		local player_inv = player:get_inventory()
+	print("Node name is: " .. nn)
 
-		for i=1,player_inv:get_size("main") do
-			player_inv:set_stack("main", i, nil)
-		end
-		for i=1,player_inv:get_size("craft") do
-			player_inv:set_stack("craft", i, nil)
-		end
-		return
+	local protected = false
+	if minetest.is_protected(pos, player:get_player_name())
+			or nn == "default:cloud"
+			or string.match(nn, "protector:protect") then
+		pos.y = pos.y + 1
+		protected = true
+		print("Is protected")
 	end
-	if minetest.registered_nodes[nn].can_dig and
-		not minetest.registered_nodes[nn].can_dig(pos, player) then
-		local player_inv = player:get_inventory()
 
-		for i=1,player_inv:get_size("main") do
-			player_inv:set_stack("main", i, nil)
-		end
-		for i=1,player_inv:get_size("craft") do
-			player_inv:set_stack("craft", i, nil)
-		end
-		return
-	end
-	minetest.dig_node(pos)
-	minetest.add_node(pos, {name="coffin:coffin", param2=param2})
-	pos.y = pos.y+1
-	minetest.set_node(pos, {name="coffin:gravestone", param2=param2})
-	local meta = minetest.get_meta(pos)
-	meta:set_string("infotext", "RIP "..player:get_player_name())
-	pos.y = pos.y-1
-	
-	meta = minetest.get_meta(pos)
-	local inv = meta:get_inventory()
 	local player_inv = player:get_inventory()
-	inv:set_size("main", 8*4)
-	
-	local empty_list = inv:get_list("main")
-	inv:set_list("main", player_inv:get_list("main"))
-	player_inv:set_list("main", empty_list)
-	
-	for i=1,player_inv:get_size("craft") do
-		inv:add_item("main", player_inv:get_stack("craft", i))
+	for i = 1, player_inv:get_size("main") do
+		player_inv:set_stack("main", i, nil)
+	end
+	for i = 1, player_inv:get_size("craft") do
 		player_inv:set_stack("craft", i, nil)
 	end
-	end)
+
+	local name = player:get_player_name()
+	if not protected then
+		minetest.set_node(pos, {name = "coffin:coffin", param2 = param2})
+
+		pos.y = pos.y + 1
+		minetest.set_node(pos, {name="coffin:gravestone", param2 = param2})
+		local meta = minetest.get_meta(pos)
+		meta:set_string("infotext", "RIP " .. name)
+
+		pos.y = pos.y - 1
+		local inv = meta:get_inventory()
+		inv:set_size("main", 8 * 4)
+		
+		local empty_list = inv:get_list("main")
+		inv:set_list("main", player_inv:get_list("main"))
+		player_inv:set_list("main", empty_list)
+	
+		for i = 1, player_inv:get_size("craft") do
+			inv:add_item("main", player_inv:get_stack("craft", i))
+			player_inv:set_stack("craft", i, nil)
+		end
+	else
+		minetest.set_node(pos, {name = "coffin:bones", param2 = param2})
+		local meta = minetest.get_meta(pos)
+		meta:set_string("infotext", name .. "'s bones")
+		meta:set_string("owner", name)
+		local inv = meta:get_inventory()
+		inv:set_size("main", 8 * 4)
+		
+		local empty_list = inv:get_list("main")
+		inv:set_list("main", player_inv:get_list("main"))
+		player_inv:set_list("main", empty_list)
+	
+		for i = 1, player_inv:get_size("craft") do
+			inv:add_item("main", player_inv:get_stack("craft", i))
+			player_inv:set_stack("craft", i, nil)
+		end
+	end
 end)
+--]]
