@@ -1,13 +1,15 @@
 -- Limit chat by distance [shout]
 -- by Muhammad Rifqi Priyo Susanto (srifqi)
--- License: CC0 1.0 Universal
--- Dependencies: (none)
-
+-- Changes Copyright 2016 James Stevenson
+-- License: GPL3
 
 shout = {}
 local channel = {}
 
--- WALKIE TALKIE
+
+minetest.register_node("kalite:intercomm", {
+	tiles = {"default_gold_block.png"}
+})
 
 minetest.register_craftitem("kalite:walkie_talkie", {
 	description = "Walkie Talkie",
@@ -24,12 +26,11 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if formname ~= "kalite:walkie_talkie" then
 		return
 	end
-	print(dump(fields))
 
 	local input = tonumber(fields.channel)
 	local name = player:get_player_name()
-	if not input or
-	    input > 30912 or input < 1 then
+	if not input
+			or input > 30912 or input < 1 then
 		return
 	else
 		channel[name] = input
@@ -61,53 +62,100 @@ shout.DISTANCE	= 64
 shout.DISTANCESQ = shout.DISTANCE ^ 2
 -- Limit chat by distance given in shout.DISTANCE parameter
 
+
+local server_owner = minetest.setting_get("name")
+local function is_owner(name)
+	return name == server_owner
+end
+
+local function has_walkie(player)
+	return player:get_inventory():contains_item("main", "kalite:walkie_talkie")
+end
+
+local function near_intercomm(pos)
+	return minetest.find_node_near(pos, 8, {"kalite:intercomm"})
+end
+
+
+-- Conditional shout
 minetest.register_on_chat_message(function(name, message)
-	if minetest.setting_get("name") == name then
-		return
-	else
-		if message == "/spawn" then
-			minetest.chat_send_player(name, "Use a Ruby Warpstone to get back to spawn.")
-		elseif message == "/sethome" then
-			minetest.chat_send_player(name, "Use an Emerald Warpstone to set your home.")
-		end
+	if is_owner(name) then
+		return false
+	end
 
-		minetest.log("action", "CHAT: <" .. name .. "> " .. message)
+	if message == "/spawn" then
+		minetest.chat_send_player(name, "Use a Ruby Warpstone to get back to spawn.")
+		return true
+	elseif message == "/sethome" then
+		minetest.chat_send_player(name, "Use an Emerald Warpstone to set your home.")
+		return true
+	end
 
-		local shouter = minetest.get_player_by_name(name)
-		local spos = shouter:getpos()
-		
-		-- Minetest library (modified)
-		local function vdistancesq(a,b) local x,y,z = a.x-b.x,a.y-b.y,a.z-b.z return x*x+y*y+z*z end
-		if shouter:get_inventory():contains_item("main", "kalite:walkie_talkie") then
-			for _, player in ipairs(minetest.get_connected_players()) do
-				local dest = player:get_player_name()
-				if not dest ~= nil then
-					if dest ~= name then
-						if player:get_inventory():contains_item("main", "kalite:walkie_talkie") and
-						    channel[dest] == channel[name] then
-							minetest.chat_send_player(dest,
-							    "<" .. name .. "> " .. message)
-						else
-							local pos = player:getpos()
-							if vdistancesq(spos, pos) <= shout.DISTANCESQ then
-								minetest.chat_send_player(dest,
-								    "<" .. name .. "> " .. message)
-							end
-						end
-					end
+	minetest.log("action", "CHAT: <" .. name .. "> " .. message)
+
+	local shouter = minetest.get_player_by_name(name)
+	local spos = shouter:getpos()
+	
+	-- Minetest library (modified)
+	local function vdistancesq(a,b) local x,y,z = a.x-b.x,a.y-b.y,a.z-b.z return x*x+y*y+z*z end
+
+	if not has_walkie(shouter) and not near_intercomm(spos) then
+		for _, player in ipairs(minetest.get_connected_players()) do
+			local dest = player:get_player_name()
+			if not dest then
+				return true
+			end
+			if dest ~= name then
+				if is_owner(dest) or vdistancesq(spos, player:getpos()) <= shout.DISTANCESQ then
+					minetest.chat_send_player(dest, "<" .. name .. "> " .. message)
 				end
 			end
-		else
-			for _, player in ipairs(minetest.get_connected_players()) do
-				local dest = player:get_player_name()
-				if not dest ~= nil then
-					if dest ~= name then
-						local pos = player:getpos()
-						if vdistancesq(spos, pos) <= shout.DISTANCESQ then
-							minetest.chat_send_player(dest,
-							    "<" .. name .. "> " .. message)
-						end
-					end
+		end
+		return true
+	elseif near_intercomm(spos) and not has_walkie(shouter) then
+		for _, player in ipairs(minetest.get_connected_players()) do
+			local dest = player:get_player_name()
+			if not dest then
+				return true
+			end
+			if dest ~= name then
+				if is_owner(dest)
+						or (has_walkie(player) and channel[dest] == 1)
+						or near_intercomm(player:getpos())
+						or vdistancesq(spos, player:getpos()) <= shout.DISTANCESQ then
+					minetest.chat_send_player(dest, "<" .. name .. "> " .. message)
+				end
+			end
+		end
+		return true
+	elseif near_intercomm(spos) and has_walkie(shouter) then
+		for _, player in ipairs(minetest.get_connected_players()) do
+			local dest = player:get_player_name()
+			if not dest then
+				return true
+			end
+			if dest ~= name then
+				if is_owner(dest)
+						or (has_walkie(player) and channel[dest] == 1)
+						or (has_walkie(player) and channel[dest] == channel[name])
+						or vdistancesq(spos, player:getpos()) <= shout.DISTANCESQ then
+					minetest.chat_send_player(dest, "<" .. name .. "> " .. message)
+				end
+			end
+		end
+		return true
+	elseif has_walkie(shouter) and not near_intercomm(spos) then
+		for _, player in ipairs(minetest.get_connected_players()) do
+			local dest = player:get_player_name()
+			if not dest then
+				return true
+			end
+			if dest ~= name then
+				if is_owner(dest)
+						or (has_walkie(player) and channel[dest] == channel[name])
+						or near_intercomm(player:getpos())
+						or vdistancesq(spos, player:getpos()) <= shout.DISTANCESQ then
+					minetest.chat_send_player(dest, "<" .. name .. "> " .. message)
 				end
 			end
 		end
@@ -140,7 +188,7 @@ minetest.register_chatcommand("me", {
 				end
 			end
 		end
-		return true, "* " .. name .. " " .. param -- Good place for a semi-colon.
+		return true, "* " .. name .. " " .. param
 	end
 })
 
@@ -169,6 +217,5 @@ minetest.register_chatcommand("msg", {
 		else
 			return false, "You need a walkie talkie."
 		end
-        end,
+        end
 })
-
