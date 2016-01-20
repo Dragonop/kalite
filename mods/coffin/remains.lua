@@ -1,5 +1,10 @@
 minetest.register_on_dieplayer(function(player)
-	local pos = player:getpos() -- initial position of remains
+    minetest.after(0.25, function ()
+	local pos = player:getpos()
+	pos.x = math.floor(pos.x + 0.5)
+	pos.y = math.floor(pos.y - 0.5)
+	pos.z = math.floor(pos.z + 0.5)
+
 	local param2 = minetest.dir_to_facedir(player:get_look_dir())
 	
 	local nn = minetest.get_node(pos).name
@@ -11,7 +16,6 @@ minetest.register_on_dieplayer(function(player)
 			or string.match(nn, "protector:protect") then
 		pos.y = pos.y + 1
 		protected = true
-		print(nn .. " is protected")
 	end
 
 	local meta
@@ -56,4 +60,5 @@ minetest.register_on_dieplayer(function(player)
 			player_inv:set_stack("craft", i, nil)
 		end
 	end
+    end)
 end)
