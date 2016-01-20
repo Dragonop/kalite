@@ -1116,8 +1116,8 @@ minetest.register_node("default:stone_tile", {
 	tiles = {"default_stone_tile.png"},
 	is_ground_content = true,
 	groups = {
-		cracky=default.dig.pressure_plate_stone,
-		stone=1
+		cracky = default.dig.cobble, --pressure_plate_stone,
+		stone = 1
 	},
 	sounds = default.node_sound_stone_defaults(),
 	stack_max = 20
