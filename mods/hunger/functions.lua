@@ -284,32 +284,21 @@ end
 minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
 	if not hitter:is_player() then return end
 	local owner = minetest.setting_get("name")
-	--if player:get_player_name() == minetest.setting_get("name") then
+
+	-- Don't bother affecting named owner
 	if player:get_player_name() == owner then
-		return true -- This is fine, a player attacking owner won't bother owner.
+		return true
 	elseif damage > 0 then
 		-- if nodes in area match warpstone_mese then do no damage and teleport attacker to jail
-		if hitter:get_player_name() == owner then
+		if hitter:get_player_name() == owner then -- No action if named owner
 			return false
 		end
+
 		local pos = player:getpos()
-		--[[
-		local positions = minetest.find_nodes_in_area(
-			{x = pos.x - 5, y = pos.y - 5, z = pos.z - 5},
-			{x = pos.x + 5, y = pos.y + 5, z = pos.z + 5},
-			{"warps:warpstone_mese"})
-		if positions[1] then
-		--]]	-- Can only hope this is strong enough of a check.
-			-- TODO: Make functions from some mods available to other mods
-			-- For example, the warping functionality of warps mod
-			-- Plus if hunger is available, and poisen function, then
-			-- i can move this chunk back to kalite mod.
-			-- Until then, I will hard code position of jail, I guess.
 		if minetest.find_node_near(pos, 8, {"warps:warpstone_mese"}) then
-			print("mese warpstone")
-			hitter:setpos({x = 0, y = -27000, z = 0})
+			hitter:setpos({x = 0, y = -27000, z = 0}) -- Make a variable
 	 		hud.change_item(hitter, "hunger", {text = "hunger_statbar_poisen.png"})
-			poisenp(1.0, 5, 0, hitter)
+			poisenp(1.0, 1, 0, hitter) -- Poison attacker
 			local hitter_name = hitter:get_player_name()
 			minetest.log("action", hitter_name .. " has been sent to jail.")
 			minetest.chat_send_player(hitter_name, "You've been sent to jail!  Please try to be more careful.")
