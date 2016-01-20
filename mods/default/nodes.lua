@@ -960,7 +960,6 @@ minetest.register_node("default:sign_wall_protected", {
 
 default.chest_formspec =
 	"size[8,9]" ..
-	--default.gui_bg ..
 	default.gui_bg_img ..
 	default.gui_slots ..
 	"list[current_name;main;0,0.3;8,4;]" ..
@@ -974,7 +973,6 @@ function default.get_locked_chest_formspec(pos)
 	local spos = pos.x .. "," .. pos.y .. "," ..pos.z
 	local formspec =
 		"size[8,9]" ..
-		--default.gui_bg ..
 		default.gui_bg_img ..
 		default.gui_slots ..
 		"list[nodemeta:" .. spos .. ";main;0,0.3;8,4;]" ..
@@ -1044,22 +1042,20 @@ minetest.register_node("default:chest_locked", {
 	end,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
+		meta:set_string("infotext", "Locked Chest")
 		meta:set_string("owner", "")
 		local inv = meta:get_inventory()
-		inv:set_size("main", 8*4)
+		inv:set_size("main", 8 * 4)
 	end,
 	can_dig = function(pos,player)
 		local meta = minetest.get_meta(pos);
 		local inv = meta:get_inventory()
 		return inv:is_empty("main") and has_locked_chest_privilege(meta, player)
 	end,
-	allow_metadata_inventory_move = function(pos, from_list, from_index, to_list, to_index, count, player)
+	allow_metadata_inventory_move = function(pos, from_list, from_index,
+			to_list, to_index, count, player)
 		local meta = minetest.get_meta(pos)
 		if not has_locked_chest_privilege(meta, player) then
-			minetest.log("action", player:get_player_name() ..
-					" tried to access a locked chest belonging to " ..
-					meta:get_string("owner") .. " at " ..
-					minetest.pos_to_string(pos))
 			return 0
 		end
 		return count
@@ -1177,12 +1173,11 @@ minetest.register_node("default:bronzeblock", {
 	stack_max = 20
 })
 
-
 minetest.register_node("default:goldblock", {
 	description = "Gold Block",
 	tiles = {"default_gold_block.png"},
 	is_ground_content = true,
-	groups = {cracky=default.dig.goldblock},
+	groups = {cracky = default.dig.goldblock},
 	sounds = default.node_sound_stone_defaults(),
 	stack_max = 20
 })
@@ -1191,7 +1186,7 @@ minetest.register_node("default:diamondblock", {
 	description = "Diamond Block",
 	tiles = {"default_diamond_block.png"},
 	is_ground_content = true,
-	groups = {cracky=default.dig.diamondblock},
+	groups = {cracky = default.dig.diamondblock},
 	sounds = default.node_sound_stone_defaults(),
 	stack_max = 20
 })
@@ -1203,7 +1198,7 @@ minetest.register_node("default:obsidian_glass", {
 	paramtype = "light",
 	sunlight_propagates = true,
 	sounds = default.node_sound_glass_defaults(),
-	groups = {cracky=default.dig.glass, oddly_breakable_by_hand=3},
+	groups = {cracky = default.dig.glass, oddly_breakable_by_hand = 3},
 	stack_max = 40
 })
 
@@ -1229,47 +1224,8 @@ minetest.register_node("default:sapling", {
 		type = "fixed",
 		fixed = {-0.3, -0.5, -0.3, 0.3, 0.35, 0.3}
 	},
-	groups = {dig=default.dig.instant, flammable=2, attached_node=1},
+	groups = {dig = default.dig.instant, flammable = 2, attached_node = 1},
 	sounds = default.node_sound_leaves_defaults(),
-	stack_max = 60
-})
-
-minetest.register_node("default:apple", {
-	description = "Apple",
-	drawtype = "plantlike",
-	visual_scale = 1.0,
-	tiles = {"default_apple.png"},
-	is_ground_content = false,
-	inventory_image = "default_apple.png",
-	paramtype = "light",
-	sunlight_propagates = true,
-	walkable = false,
-	selection_box = {
-		type = "fixed",
-		fixed = {-0.2, -0.5, -0.2, 0.2, 0, 0.2}
-	},
-	groups = {dig=default.dig.instant, fleshy=3, flammable=2, leafdecay=3, leafdecay_drop=1},
-	on_use = minetest.item_eat(1),
-	sounds = default.node_sound_leaves_defaults(),
-	after_place_node = function(pos, placer, itemstack)
-		if placer:is_player() then
-			minetest.set_node(pos, {name="default:apple", param2=1})
-		end
-	end,
-	stack_max = 60
-})
-
-minetest.register_craftitem("default:old_apple", {
-	description = "Old Apple",
-	inventory_image = "default_oldapple.png",
-	on_use = minetest.item_eat(1),
-	stack_max = 60
-})
-
-minetest.register_craftitem("default:old_bread", {
-	description = "Old Bread",
-	inventory_image = "default_oldbread.png",
-	on_use = minetest.item_eat(2),
 	stack_max = 60
 })
 
@@ -1283,7 +1239,7 @@ minetest.register_node("default:dry_shrub", {
 	paramtype = "light",
 	walkable = false,
 	buildable_to = true,
-	groups = {dig=default.dig.instant, flammable=3, attached_node=1},
+	groups = {dig = default.dig.instant, flammable = 3, attached_node = 1},
 	sounds = default.node_sound_leaves_defaults(),
 	selection_box = {
 		type = "fixed",
@@ -1292,7 +1248,7 @@ minetest.register_node("default:dry_shrub", {
 	drop = {
 		max_items = 1,
 		items = {
-			{items = {"farming:seed_wheat"}, rarity=15}
+			{items = {"farming:seed_wheat"}, rarity = 15}
 		},
 	},
 	stack_max = 60
@@ -1304,24 +1260,10 @@ minetest.register_node("default:ice", {
 	is_ground_content = true,
 	paramtype = "light",
 	freezemelt = "default:water_source",
-	groups = {cracky=default.dig.ice, melts=1},
+	groups = {cracky = default.dig.ice, melts = 1},
 	sounds = default.node_sound_glass_defaults(),
 	stack_max = 40
 })
-
-minetest.register_abm({
-	nodenames = "default:ice",
-	interval = 30,
-	chance = 1,
-	action = function(pos, node)
-		if (minetest.get_node_light(pos)) < 13 then
-			return
-		end
-		minetest.set_node(pos, {name = "default:water_source"})
-		nodeupdate(pos)
-	end
-})
-	
 
 minetest.register_node("default:snow", {
 	description = "Snow",
@@ -1340,10 +1282,10 @@ minetest.register_node("default:snow", {
 			{-0.5, -0.5, -0.5,  0.5, -0.5+2/16, 0.5},
 		},
 	},
-	groups = {crumbly=default.dig.snow, falling_node=1, melts=1, float=1},
+	groups = {crumbly = default.dig.snow, falling_node = 1, melts = 1, float = 1},
 	sounds = default.node_sound_dirt_defaults({
-		footstep = {name="default_snow_footstep", gain=0.25},
-		dug = {name="default_snow_footstep", gain=0.75},
+		footstep = {name = "default_snow_footstep", gain = 0.25},
+		dug = {name = "default_snow_footstep", gain = 0.75},
 	}),
 	--[[after_construct = function(pos)
 		pos.y = pos.y - 1
@@ -1362,8 +1304,8 @@ minetest.register_node("default:snowblock", {
 	freezemelt = "default:water_source",
 	groups = {crumbly=default.dig.snowblock, melts=1},
 	sounds = default.node_sound_dirt_defaults({
-		footstep = {name="default_snow_footstep", gain=0.25},
-		dug = {name="default_snow_footstep", gain=0.75},
+		footstep = {name = "default_snow_footstep", gain = 0.25},
+		dug = {name = "default_snow_footstep", gain = 0.75},
 	}),
 	stack_max = 40
 })
@@ -1371,7 +1313,7 @@ minetest.register_node("default:snowblock", {
 minetest.register_node("default:lightbox", {
 	description = "Lightbox",
 	tiles = {"default_lightbox.png"},
-	groups = {cracky=default.dig.glass, choppy=default.dig.glass},
+	groups = {cracky = default.dig.glass, choppy = default.dig.glass},
 	light_source = 14, -- Is this too high?
 	sounds = default.node_sound_glass_defaults(),
 	stack_max = 40

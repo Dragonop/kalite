@@ -105,35 +105,6 @@ function default.drop_node_inventory()
 	end
 end
 
--- FIXME this is bugged when a player is (timed-out?)
--- and a kick will result in a crash
--- Something about inv being nil?
-
-function default.drop_player_inventory(pos, digger)
-		pos.y = pos.y+1.5
-		local inv = digger:get_inventory()
-		for i = 1, inv:get_size("main") do
-			local stack = inv:get_stack("main", i)
-			if not stack:is_empty() then
-				local p = {	x = pos.x + math.random(0, 5)/5 - 0.5,
-						y = pos.y, 
-						z = pos.z + math.random(0, 5)/5 - 0.5
-					  }
-				minetest.add_item(p, stack)
-			end
-		end
-		for i = 1, inv:get_size("craft") do
-			local stack = inv:get_stack("craft", i)
-			if not stack:is_empty() then
-				local p = {	x = pos.x + math.random(0, 5)/5 - 0.5,
-						y = pos.y, 
-						z = pos.z + math.random(0, 5)/5 - 0.5
-					  }
-				minetest.add_item(p, stack)
-			end
-		end
-end
-
 --
 -- Grow trees
 --
@@ -371,6 +342,21 @@ minetest.register_abm({
 		end
 	end
 })
+
+
+minetest.register_abm({
+	nodenames = "default:ice",
+	interval = 30,
+	chance = 1,
+	action = function(pos, node)
+		if (minetest.get_node_light(pos)) < 13 then
+			return
+		end
+		minetest.set_node(pos, {name = "default:water_source"})
+		nodeupdate(pos)
+	end
+})
+	
 
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode)

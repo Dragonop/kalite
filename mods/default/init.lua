@@ -135,6 +135,7 @@ local modpath = minetest.get_modpath("default")
 
 dofile(modpath .. "/functions.lua")
 dofile(modpath .. "/nodes.lua")
+dofile(modpath .. "/food.lua")
 dofile(modpath .. "/furnace.lua")
 dofile(modpath .. "/tools.lua")
 dofile(modpath .. "/craftitems.lua")
