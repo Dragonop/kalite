@@ -100,9 +100,9 @@ local def = {
 
   drops = function(self)
     local items = {{"creatures:flesh"}, {"coffin:bone"}}
-    if self.has_wool then
+    --[[if self.has_wool then
       table.insert(items, {"wool:white", {min = 1, max = 2}})
-    end
+    end]]--
     creatures.dropItems(self.object:getpos(), items)
   end,
 
@@ -131,9 +131,9 @@ local def = {
     }
   },
 
-  on_punch = function(self, puncher)
+  --[[on_punch = function(self, puncher)
     shear(self)
-  end,
+  end,--]]
 
   get_staticdata = function(self)
     return {
