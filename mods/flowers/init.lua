@@ -202,8 +202,8 @@ minetest.register_abm({
 				return
 			end
 			if minetest.get_node(seedling).name == "air" then
-				minetest.set_node(seedling, {name=node.name})
+				minetest.set_node(seedling, {name = node.name})
 			end
 		end
-	end,
+	end
 })

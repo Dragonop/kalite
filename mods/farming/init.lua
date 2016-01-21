@@ -113,6 +113,11 @@ minetest.register_abm({
 	interval = 2,
 	chance = 200,
 	action = function(pos, node)
+		local n = minetest.get_node({x = pos.x, y = pos.y + 1, z = pos.z}).name
+		if n == "default:junglegrass" or string.match(n, "default:grass_") then
+			minetest.set_node(pos, {name = "default:grass"})
+			return
+		end
 		if (minetest.find_node_near(pos, 6, {"group:water"}) and minetest.find_node_near(pos, 1, {"default:grass"})) or minetest.find_node_near(pos, 1, {"group:water"}) then
 			pos.y = pos.y+1
 			local nn = minetest.get_node(pos).name
@@ -132,6 +137,10 @@ minetest.register_abm({
 	interval = 2,
 	chance = 20,
 	action = function(pos, node)
+		local n = minetest.get_node({x = pos.x, y = pos.y + 1, z = pos.z}).name
+		if n == "default:junglegrass" or string.match(n, "default:grass_") then
+			return
+		end 
 		if not minetest.find_node_near(pos, 6, {"group:water"}) then
 			minetest.set_node(pos, {name="default:dry_dirt"})
 		else
