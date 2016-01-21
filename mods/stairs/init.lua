@@ -478,7 +478,7 @@ end
 -- Nodes will be called stairs:{stair,slab}_<subname>
 
 function stairs.register_shape(subname, recipeitem, groups, images,
-		desc_stair, desc_slab, desc_inner, desc_outer, sounds, light_source, use_texture_alpha)
+		desc_stair, desc_slab, desc_microslab, desc_inner, desc_outer, sounds, light_source, use_texture_alpha)
 	stairs.register_stair(subname, recipeitem, groups, images, desc_stair, sounds, light_source, use_texture_alpha)
 	stairs.register_slab(subname, recipeitem, groups, images, desc_slab, sounds, light_source, use_texture_alpha)
 	stairs.register_microslab(subname, recipeitem, groups, images, desc_microslab, light_source, use_texture_alpha)
