@@ -66,6 +66,9 @@ minetest.register_entity("railcart:cart_entity", {
 			return
 		end	
 		if puncher:get_player_control().sneak then
+			if minetest.is_protected(self.object:getpos(), puncher:get_player_name()) then
+				return
+			end
 			if self.cart then
 				if self.cart.id then
 					railcart.allcarts[self.cart.id] = nil
