@@ -31,3 +31,6 @@ dofile(modpath .."/register.lua")
 
 -- Common items
 dofile(modpath .."/items.lua")
+
+-- Mobs
+dofile(modpath .. "/mobs/zombie_salesman.lua")
