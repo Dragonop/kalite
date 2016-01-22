@@ -159,8 +159,20 @@ minetest.register_craftitem("bucket:bucket_empty", {
 					"take ".. node.name) then
 				return
 			end
+			if item_count > 1 then
+
+				-- if space in inventory add filled bucked, otherwise drop as item
+				local inv = user:get_inventory()
+				if inv:room_for_item("main", {name = "bucket:bucket_water"}) then
+					inv:add_item("main", "bucket:bucket_water")
+				else
+					local pos = user:getpos()
+					pos.y = math.floor(pos.y + 0.5)
+					core.add_item(pos, {name = "bucket:bucket_water"})
+				end
+			end
 			minetest.add_node(pointed_thing.under, {name = "air"})
-			return ItemStack("bucket:bucket_water")
+			return ItemStack("bucket:bucket_empty " .. tostring(item_count - 1))
 		end
 	end,
 })
