@@ -194,19 +194,43 @@ local function get_water(pos)
 	local pos1 = {x = pos.x - 1, y = pos.y, z = pos.z - 1}
 	local pos2 = {x = pos.x + 1, y = pos.y, z = pos.z + 1}
 	local water = minetest.find_nodes_in_area(pos1, pos2, "default:water_source")
-	if #water > 8 then
-		minetest.set_node(pos, {name = "default:water_source_infinite"})
-	end
+	return #water
 end
 
 minetest.register_abm({
 	nodenames = {"default:water_source"},
 	neighbors = {"default:water_source"},
-	interval = 10,
+	interval = 15,
 	chance = 1,
 	catch_up = false,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		get_water(pos)
+		if get_water(pos) == 9 then
+			minetest.set_node(pos, {name = "default:water_source_infinite"})
+		end
+	end
+})
+
+minetest.register_abm({
+	nodenames = {"default:water_source_infinite"},
+	interval = 5,
+	chance = 1,
+	catch_up = false,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		if get_water(pos) ~= 8 then
+			minetest.set_node(pos, {name = "default:water_source"})
+		end
+	end
+})
+
+minetest.register_abm({
+	nodenames = {"default:water_flowing_infinite"},
+	interval = 1,
+	chance = 1,
+	catch_up = false,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		-- What are active object counts?
+		-- Can they be used to reduce processing amount?
+		minetest.set_node(pos, {name = "default:water_source"})
 	end
 })
 

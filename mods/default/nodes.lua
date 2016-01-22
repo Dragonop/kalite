@@ -776,7 +776,7 @@ minetest.register_node("default:water_flowing_infinite", {
 	liquid_alternative_source = "default:water_source_infinite",
 	liquid_viscosity = WATER_VISC,
 	liquid_renewable = true,
-	liquid_range = 4,
+	liquid_range = 1,
 	freezemelt = "default:snow",
 	post_effect_color = {a = 64, r = 100, g = 100, b = 200},
 	groups = {
@@ -830,7 +830,7 @@ minetest.register_node("default:water_source_infinite", {
 	liquid_alternative_source = "default:water_source_infinite",
 	liquid_viscosity = WATER_VISC,
 	liquid_renewable = true,
-	liquid_range = 4,
+	liquid_range = 1,
 	freezemelt = "default:ice",
 	post_effect_color = {a = 64, r = 100, g = 100, b = 200},
 	groups = {
