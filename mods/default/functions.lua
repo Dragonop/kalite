@@ -198,6 +198,17 @@ local function get_water(pos)
 end
 
 minetest.register_abm({
+	nodenames = {"default:water_flowing"},
+	neighbors = {"default:water_source_infinite"},
+	interval = 1,
+	chance = 1,
+	catch_up = false,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		minetest.set_node(pos, {name = "default:water_source"})
+	end
+})
+
+minetest.register_abm({
 	nodenames = {"default:water_source"},
 	neighbors = {"default:water_source"},
 	interval = 15,
