@@ -1,15 +1,13 @@
--- LIGHTBOX
+-- mods/default/crafting.lua
 
 minetest.register_craft({
-	output = "default:lightbox 2",
+	output = "default:lightbox 3",
 	recipe = {
 		{"group:wood", "default:glass", "group:wood"},
-		{"default:glass", "default:torch", "default:glass"},
-		{"default:wood", "default:glass", "group:wood"}
+		{"default:torch", "default:torch", "default:torch"},
+		{"group:wood", "default:glass", "group:wood"}
 	}
 })
-
--- MINERALS
 
 minetest.register_craft({
 	type = "shapeless",
@@ -17,15 +15,20 @@ minetest.register_craft({
 	recipe = {"default:dry_dirt", "kalite:kalite_lump", "default:coal_lump"}
 })
 
--- DIRT
-
 minetest.register_craft({
 	type="shapeless",
 	output="default:dry_dirt",
 	recipe={"default:cobble", "kalite:kalite_lump"}
 })
 
--- mods/default/crafting.lua
+minetest.register_craft({
+	output = "default:wood_pressurized",
+	recipe = {
+		{"group:wood", "group:wood", "group:wood"},
+		{"group:wood", "group:wood", "group:wood"},
+		{"group:wood", "group:wood", "group:wood"}
+	}
+})
 
 minetest.register_craft({
 	output = 'default:wood 4',

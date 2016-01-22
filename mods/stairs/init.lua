@@ -490,7 +490,7 @@ end
 -- Register default stairs and slabs
 
 stairs.register_shape("wood", "default:wood",
-		{choppy = default.dig.wood, flammable = 3, fuel = 1, wood = 1},
+		{choppy = default.dig.wood, flammable = 3, fuel = 1},
 		{"default_wood.png"},
 		"Wooden Stair",
 		"Wooden Slab",
@@ -500,7 +500,7 @@ stairs.register_shape("wood", "default:wood",
 		default.node_sound_wood_defaults())
 
 stairs.register_shape("junglewood", "default:junglewood",
-		{choppy = default.dig.wood, flammable = 3, fuel =1, wood = 1},
+		{choppy = default.dig.wood, flammable = 3, fuel =1},
 		{"default_junglewood.png"},
 		"Junglewood Stair",
 		"Junglewood Slab",

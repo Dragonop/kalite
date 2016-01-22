@@ -610,6 +610,7 @@ minetest.register_node("default:wood_pressurized", {
 	tiles = {"default_wood_pressurized.png"},
 	groups = {choppy = default.dig.wood, wood = 1},
 	stack_max = 40
+})
 
 minetest.register_node("default:cloud", {
 	description = "Cloud",
@@ -628,13 +629,23 @@ minetest.register_node("default:water_flowing", {
 		{
 			image = "default_water_flowing_animated.png",
 			backface_culling = false,
-			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 0.5}
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 0.5
+			}
 		},
 		{
 			image = "default_water_flowing_animated.png",
 			backface_culling = true,
-			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 0.5}
-		},
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 0.5
+			}
+		}
 	},
 	alpha = WATER_ALPHA,
 	paramtype = "light",
@@ -645,7 +656,6 @@ minetest.register_node("default:water_flowing", {
 	buildable_to = true,
 	drop = "",
 	drowning = 1,
-	--liquid_range = 5,
 	liquidtype = "flowing",
 	liquid_alternative_flowing = "default:water_flowing",
 	liquid_alternative_source = "default:water_source",
@@ -671,15 +681,25 @@ minetest.register_node("default:water_source", {
 	tiles = {
 		{
 			name = "default_water_source_animated.png",
-			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.0}
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 2.0
+			}
 		}
 	},
 	special_tiles = {
 		-- New-style water source material (mostly unused)
 		{
 			name="default_water_source_animated.png",
-			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.0},
-			backface_culling = false,
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 2.0
+			},
+			backface_culling = false
 		}
 	},
 	alpha = WATER_ALPHA,
@@ -715,13 +735,23 @@ minetest.register_node("default:water_flowing_infinite", {
 		{
 			image = "default_water_flowing_animated.png",
 			backface_culling = false,
-			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 0.5}
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 0.5
+			}
 		},
 		{
 			image = "default_water_flowing_animated.png",
 			backface_culling = true,
-			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 0.5}
-		},
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 0.5
+			}
+		}
 	},
 	alpha = WATER_ALPHA,
 	paramtype = "light",
@@ -732,7 +762,6 @@ minetest.register_node("default:water_flowing_infinite", {
 	buildable_to = true,
 	drop = "",
 	drowning = 1,
-	--liquid_range = 5,
 	liquidtype = "flowing",
 	liquid_alternative_flowing = "default:water_flowing_infinite",
 	liquid_alternative_source = "default:water_source_infinite",
@@ -758,15 +787,25 @@ minetest.register_node("default:water_source_infinite", {
 	tiles = {
 		{
 			name = "default_water_source_animated.png",
-			animation = {type="vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.0}
+			animation = {
+				type="vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 2.0
+			}
 		}
 	},
 	special_tiles = {
 		-- New-style water source material (mostly unused)
 		{
 			name="default_water_source_animated.png",
-			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.0},
-			backface_culling = false,
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 2.0
+			},
+			backface_culling = false
 		}
 	},
 	alpha = WATER_ALPHA,
@@ -800,15 +839,25 @@ minetest.register_node("default:lava_flowing", {
 	tiles = {"default_lava.png"},
 	special_tiles = {
 		{
-			image="default_lava_flowing_animated.png",
-			backface_culling=false,
-			animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length=3.3}
+			image = "default_lava_flowing_animated.png",
+			backface_culling = false,
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 3.3
+			}
 		},
 		{
-			image="default_lava_flowing_animated.png",
-			backface_culling=true,
-			animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length=3.3}
-		},
+			image = "default_lava_flowing_animated.png",
+			backface_culling = true,
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 3.3
+			}
+		}
 	},
 	paramtype = "light",
 	paramtype2 = "flowingliquid",
@@ -825,14 +874,14 @@ minetest.register_node("default:lava_flowing", {
 	liquid_viscosity = LAVA_VISC,
 	liquid_renewable = false,
 	liquid_range = 4,
-	damage_per_second = 4*2,
+	damage_per_second = 4 * 2,
 	post_effect_color = {a=192, r=255, g=64, b=0},
 	groups = {
-		lava=3,
-		liquid=2,
-		hot=3,
-		igniter=1,
-		not_in_creative_inventory=1
+		lava = 3,
+		liquid = 2,
+		hot = 3,
+		igniter = 1,
+		not_in_creative_inventory = 1
 	},
 })
 
@@ -841,25 +890,26 @@ minetest.register_node("default:lava_source", {
 	inventory_image = minetest.inventorycube("default_lava.png"),
 	drawtype = "liquid",
 	tiles = {
-		{name="default_lava_source_animated.png",
+		{name = "default_lava_source_animated.png",
 		animation = {
-			type="vertical_frames",
-			aspect_w=16,
-			aspect_h=16,
-			length=3.0
+			type = "vertical_frames",
+			aspect_w = 16,
+			aspect_h = 16,
+			length = 3.0
 		}
 		}
 	},
 	special_tiles = {
 		-- New-style lava source material (mostly unused)
 		{
-			name="default_lava_source_animated.png",
-			animation = {type="vertical_frames",
-				aspect_w=16,
-				aspect_h=16,
-				length=3.0
+			name = "default_lava_source_animated.png",
+			animation = {
+				type = "vertical_frames",
+				aspect_w = 16,
+				aspect_h = 16,
+				length = 3.0
 			},
-			backface_culling = false,
+			backface_culling = false
 		}
 	},
 	paramtype = "light",
@@ -876,11 +926,10 @@ minetest.register_node("default:lava_source", {
 	liquid_viscosity = LAVA_VISC,
 	liquid_renewable = false,
 	liquid_range = 4,
-	damage_per_second = 4*2,
-	post_effect_color = {a=192, r=255, g=64, b=0},
-	groups = {lava=3, liquid=2, hot=3, igniter=1},
+	damage_per_second = 4 * 2,
+	post_effect_color = {a = 192, r = 255, g = 64, b = 0},
+	groups = {lava = 3, liquid = 2, hot = 3, igniter = 1},
 })
-
 
 core.register_craftitem("default:torch", {
 	description = "Torch",
