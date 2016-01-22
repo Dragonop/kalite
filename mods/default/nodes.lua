@@ -600,17 +600,23 @@ minetest.register_node("default:ladder", {
 minetest.register_node("default:wood", {
 	description = "Wooden Planks",
 	tiles = {"default_wood.png"},
-	groups = {choppy=default.dig.wood, flammable=3, wood=1},
+	groups = {choppy = default.dig.wood, flammable = 3, wood = 1},
 	sounds = default.node_sound_wood_defaults(),
 	stack_max = 40
 })
+
+minetest.register_node("default:wood_pressurized", {
+	description = "Pressurized Wood",
+	tiles = {"default_wood_pressurized.png"},
+	groups = {choppy = default.dig.wood, wood = 1},
+	stack_max = 40
 
 minetest.register_node("default:cloud", {
 	description = "Cloud",
 	tiles = {"default_cloud.png"},
 	sounds = default.node_sound_defaults(),
-	groups = {not_in_creative_inventory=1},
-	stack_max = 40,
+	groups = {not_in_creative_inventory = 1},
+	stack_max = 40
 })
 
 minetest.register_node("default:water_flowing", {
@@ -620,14 +626,14 @@ minetest.register_node("default:water_flowing", {
 	tiles = {"default_water.png"},
 	special_tiles = {
 		{
-			image="default_water_flowing_animated.png",
-			backface_culling=false,
-			animation={type="vertical_frames", aspect_w=16, aspect_h=16, length=0.5}
+			image = "default_water_flowing_animated.png",
+			backface_culling = false,
+			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 0.5}
 		},
 		{
-			image="default_water_flowing_animated.png",
-			backface_culling=true,
-			animation={type="vertical_frames", aspect_w=16, aspect_h=16, length=0.5}
+			image = "default_water_flowing_animated.png",
+			backface_culling = true,
+			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 0.5}
 		},
 	},
 	alpha = WATER_ALPHA,
@@ -647,14 +653,14 @@ minetest.register_node("default:water_flowing", {
 	liquid_renewable = false,
 	liquid_range = 4,
 	freezemelt = "default:snow",
-	post_effect_color = {a=64, r=100, g=100, b=200},
+	post_effect_color = {a = 64, r = 100, g = 100, b = 200},
 	groups = {
-		water=3,
-		liquid=3,
-		puts_out_fire=1,
-		not_in_creative_inventory=1,
-		freezes=1,
-		melt_around=1
+		water = 3,
+		liquid = 3,
+		puts_out_fire = 1,
+		not_in_creative_inventory = 1,
+		freezes = 1,
+		melt_around = 1
 	}
 })
 
@@ -665,14 +671,14 @@ minetest.register_node("default:water_source", {
 	tiles = {
 		{
 			name = "default_water_source_animated.png",
-			animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length=2.0}
+			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.0}
 		}
 	},
 	special_tiles = {
 		-- New-style water source material (mostly unused)
 		{
 			name="default_water_source_animated.png",
-			animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length=2.0},
+			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.0},
 			backface_culling = false,
 		}
 	},
@@ -691,12 +697,99 @@ minetest.register_node("default:water_source", {
 	liquid_renewable = false,
 	liquid_range = 4,
 	freezemelt = "default:ice",
-	post_effect_color = {a=64, r=100, g=100, b=200},
+	post_effect_color = {a = 64, r = 100, g = 100, b = 200},
 	groups = {
-		water=3,
-		liquid=3,
-		puts_out_fire=1,
-		freezes=1
+		water = 3,
+		liquid = 3,
+		puts_out_fire = 1,
+		freezes = 1
+	}
+})
+
+minetest.register_node("default:water_flowing_infinite", {
+	description = "Flowing Water (Infinite)",
+	inventory_image = minetest.inventorycube("default_water.png"),
+	drawtype = "flowingliquid",
+	tiles = {"default_water.png"},
+	special_tiles = {
+		{
+			image = "default_water_flowing_animated.png",
+			backface_culling = false,
+			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 0.5}
+		},
+		{
+			image = "default_water_flowing_animated.png",
+			backface_culling = true,
+			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 0.5}
+		},
+	},
+	alpha = WATER_ALPHA,
+	paramtype = "light",
+	paramtype2 = "flowingliquid",
+	walkable = false,
+	pointable = false,
+	diggable = false,
+	buildable_to = true,
+	drop = "",
+	drowning = 1,
+	--liquid_range = 5,
+	liquidtype = "flowing",
+	liquid_alternative_flowing = "default:water_flowing_infinite",
+	liquid_alternative_source = "default:water_source_infinite",
+	liquid_viscosity = WATER_VISC,
+	liquid_renewable = true,
+	liquid_range = 4,
+	freezemelt = "default:snow",
+	post_effect_color = {a = 64, r = 100, g = 100, b = 200},
+	groups = {
+		water = 3,
+		liquid = 3,
+		puts_out_fire = 1,
+		not_in_creative_inventory = 1,
+		freezes = 1,
+		melt_around = 1
+	}
+})
+
+minetest.register_node("default:water_source_infinite", {
+	description = "Water Source (Infinite)",
+	inventory_image = minetest.inventorycube("default_water.png"),
+	drawtype = "liquid",
+	tiles = {
+		{
+			name = "default_water_source_animated.png",
+			animation = {type="vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.0}
+		}
+	},
+	special_tiles = {
+		-- New-style water source material (mostly unused)
+		{
+			name="default_water_source_animated.png",
+			animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 2.0},
+			backface_culling = false,
+		}
+	},
+	alpha = WATER_ALPHA,
+	paramtype = "light",
+	walkable = false,
+	pointable = false,
+	diggable = false,
+	buildable_to = true,
+	drop = "",
+	drowning = 1,
+	liquidtype = "source",
+	liquid_alternative_flowing = "default:water_flowing_infinite",
+	liquid_alternative_source = "default:water_source_infinite",
+	liquid_viscosity = WATER_VISC,
+	liquid_renewable = true,
+	liquid_range = 4,
+	freezemelt = "default:ice",
+	post_effect_color = {a = 64, r = 100, g = 100, b = 200},
+	groups = {
+		water = 3,
+		liquid = 3,
+		puts_out_fire = 1,
+		freezes = 1
 	}
 })
 
