@@ -72,9 +72,7 @@ minetest.register_node("coffin:bones", {
 				local inv = meta:get_inventory()
 				for i = 1, inv:get_size("main") do
 					local stack = inv:get_stack("main", i)
-					print(stack:get_name())
 					if not stack:is_empty() then
-						print("not empty")
 						local p = {
 							x = pos.x + math.random(0, 5) / 5 - 0.5,
 							y = pos.y + 1,
