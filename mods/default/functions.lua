@@ -176,7 +176,7 @@ minetest.register_abm({
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		default.cool_lava_flowing(pos, node, active_object_count, active_object_count_wider)
-	end,
+	end
 })
 
 minetest.register_abm({
@@ -186,7 +186,28 @@ minetest.register_abm({
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		default.cool_lava_source(pos, node, active_object_count, active_object_count_wider)
-	end,
+	end
+})
+
+-- Infinite water
+local function get_water(pos)
+	local pos1 = {x = pos.x - 1, y = pos.y, z = pos.z - 1}
+	local pos2 = {x = pos.x + 1, y = pos.y, z = pos.z + 1}
+	local water = minetest.find_nodes_in_area(pos1, pos2, "default:water_source")
+	if #water > 8 then
+		minetest.set_node(pos, {name = "default:water_source_infinite"})
+	end
+end
+
+minetest.register_abm({
+	nodenames = {"default:water_source"},
+	neighbors = {"default:water_source"},
+	interval = 10,
+	chance = 1,
+	catch_up = false,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		get_water(pos)
+	end
 })
 
 -- Papyrus and cactus growing
@@ -198,22 +219,22 @@ minetest.register_abm({
 	interval = 50,
 	chance = 20,
 	action = function(pos, node)
-		pos.y = pos.y-1
+		pos.y = pos.y - 1
 		local name = minetest.get_node(pos).name
 		if minetest.get_item_group(name, "sand") ~= 0 then
-			pos.y = pos.y+1
+			pos.y = pos.y + 1
 			local height = 0
 			while minetest.get_node(pos).name == "default:cactus" and height < 4 do
-				height = height+1
-				pos.y = pos.y+1
+				height = height + 1
+				pos.y = pos.y + 1
 			end
 			if height < 4 then
 				if minetest.get_node(pos).name == "air" then
-					minetest.set_node(pos, {name="default:cactus"})
+					minetest.set_node(pos, {name = "default:cactus"})
 				end
 			end
 		end
-	end,
+	end
 })
 
 minetest.register_abm({

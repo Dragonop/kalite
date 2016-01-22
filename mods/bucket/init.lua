@@ -153,6 +153,14 @@ minetest.register_craftitem("bucket:bucket_empty", {
 			minetest.add_node(pointed_thing.under, {name="air"})
 
 			return ItemStack(giving_back)
+		elseif node.name == "default:water_source_infinite" then
+			if check_protection(pointed_thing.under,
+					user:get_player_name(),
+					"take ".. node.name) then
+				return
+			end
+			minetest.add_node(pointed_thing.under, {name = "air"})
+			return ItemStack("bucket:bucket_water")
 		end
 	end,
 })
@@ -178,8 +186,9 @@ minetest.register_craft({
 	type = "fuel",
 	recipe = "bucket:bucket_lava",
 	burntime = 60,
-	replacements = {{"bucket:bucket_lava", "bucket:bucket_empty"}},
+	replacements = {
+		{"bucket:bucket_lava", "bucket:bucket_empty"}
+	}
 })
 
 dofile(minetest.get_modpath("bucket") .. "/snowbucket.lua")
-

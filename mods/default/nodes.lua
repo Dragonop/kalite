@@ -334,7 +334,12 @@ minetest.register_node("default:junglegrass", {
 	walkable = false,
 	buildable_to = true,
 	is_ground_content = true,
-	groups = {dig=default.dig.instant, flammable=2, flora=1, attached_node=1},
+	groups = {
+		dig = default.dig.instant,
+		flammable = 2,
+		flora = 1,
+		attached_node = 1
+	},
 	sounds = default.node_sound_leaves_defaults(),
 	selection_box = {
 		type = "fixed",
@@ -350,7 +355,11 @@ minetest.register_node("default:leaves", {
 	tiles = {"default_leaves.png"},
 	is_ground_content = false,
 	paramtype = "light",
-	groups = {snappy=default.dig.leaves, leafdecay=3, flammable=2, leaves=1},
+	groups = {
+		snappy = default.dig.leaves,
+		leafdecay = 3,
+		flammable = 2,
+		leaves = 1},
 	drop = {
 		max_items=1,
 		items = {
