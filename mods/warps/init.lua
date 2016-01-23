@@ -10,11 +10,14 @@ of the license, or (at your option) any later version.
 --]]
 
 -- Modified by James Stevenson
+-- MultiWarps Copyright 2016 James Stevenson
+-- GPL3
 
 -- TODO
 -- Teleport away attacker if player wields Mese Warpstone.
--- See through models / Improved textures
--- Rotation
+-- [x] See through models / Improved textures
+--		[Needs further improvement]
+-- Fix/replace inventory image
 
 
 
@@ -211,45 +214,45 @@ minetest.register_chatcommand("warp", {
 minetest.register_craft({
 	output = "warps:warpstone_amethyst",
 	recipe = {
-			{"caverealms:glow_amethyst", "caverealms:glow_amethyst", "caverealms:glow_amethyst"},
-			{"caverealms:glow_amethyst", "default:diamond", "caverealms:glow_amethyst"},
-			{"caverealms:glow_amethyst", "caverealms:glow_amethyst", "caverealms:glow_amethyst"}
+		{"caverealms:glow_amethyst", "caverealms:glow_amethyst", "caverealms:glow_amethyst"},
+		{"caverealms:glow_amethyst", "default:diamond", "caverealms:glow_amethyst"},
+		{"caverealms:glow_amethyst", "caverealms:glow_amethyst", "caverealms:glow_amethyst"}
 	}
 })
 
 minetest.register_craft({
 	output = "warps:warpstone_emerald",
 	recipe = {
-			{"caverealms:glow_emerald", "caverealms:glow_emerald", "caverealms:glow_emerald"},
-			{"caverealms:glow_emerald", "default:diamond", "caverealms:glow_emerald"},
-			{"caverealms:glow_emerald", "caverealms:glow_emerald", "caverealms:glow_emerald"}
+		{"caverealms:glow_emerald", "caverealms:glow_emerald", "caverealms:glow_emerald"},
+		{"caverealms:glow_emerald", "default:diamond", "caverealms:glow_emerald"},
+		{"caverealms:glow_emerald", "caverealms:glow_emerald", "caverealms:glow_emerald"}
 	}
 })
 
 minetest.register_craft({
 	output = "warps:warpstone_ruby",
 	recipe = {
-			{"caverealms:glow_ruby", "caverealms:glow_ruby", "caverealms:glow_ruby"},
-			{"caverealms:glow_ruby", "default:diamond", "caverealms:glow_ruby"},
-			{"caverealms:glow_ruby", "caverealms:glow_ruby", "caverealms:glow_ruby"}
+		{"caverealms:glow_ruby", "caverealms:glow_ruby", "caverealms:glow_ruby"},
+		{"caverealms:glow_ruby", "default:diamond", "caverealms:glow_ruby"},
+		{"caverealms:glow_ruby", "caverealms:glow_ruby", "caverealms:glow_ruby"}
 	}
 })
 
 minetest.register_craft({
 	output = "warps:warpstone_crystal",
 	recipe = {
-			{"caverealms:glow_crystal", "caverealms:glow_crystal", "caverealms:glow_crystal"},
-			{"caverealms:glow_crystal", "default:diamond", "caverealms:glow_crystal"},
-			{"caverealms:glow_crystal", "caverealms:glow_crystal", "caverealms:glow_crystal"}
+		{"caverealms:glow_crystal", "caverealms:glow_crystal", "caverealms:glow_crystal"},
+		{"caverealms:glow_crystal", "default:diamond", "caverealms:glow_crystal"},
+		{"caverealms:glow_crystal", "caverealms:glow_crystal", "caverealms:glow_crystal"}
 	}
 })
 
 minetest.register_craft({
 	output = "warps:warpstone_mese",
 	recipe = {
-			{"caverealms:glow_mese", "caverealms:glow_mese", "caverealms:glow_mese"},
-			{"caverealms:glow_mese", "default:diamond", "caverealms:glow_mese"},
-			{"caverealms:glow_mese", "caverealms:glow_mese", "caverealms:glow_mese"}
+		{"caverealms:glow_mese", "caverealms:glow_mese", "caverealms:glow_mese"},
+		{"caverealms:glow_mese", "default:diamond", "caverealms:glow_mese"},
+		{"caverealms:glow_mese", "caverealms:glow_mese", "caverealms:glow_mese"}
 	}
 })
 
@@ -375,6 +378,8 @@ minetest.register_node("warps:warpstone_crystal", {
 	sunlight_propagates = true,
 	walkable = false,
 	paramtype = "light",
+	paramtype2 = "facedir",
+	use_texture_alpha = true,
 	groups = {cracky = default.dig.glass},
 	light_source = 13,
 	sounds = default.node_sound_glass_defaults(),
@@ -388,19 +393,6 @@ minetest.register_node("warps:warpstone_crystal", {
 	on_punch = function(pos, node, puncher, pointed_thingo)
 		warp_queue_add(puncher, "SkyWorld")
 	end
-	--[[
-	on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
-		warps.stone_pos[clicker:get_player_name()] = pos
-		warp_menu(pos, node, clicker, itemstack, pointed_thing)
-	end,
-	on_punch = function(pos, node, puncher, pointed_thing)
-		local meta = minetest.get_meta(pos)
-		local destination = meta:get_string("destination")
-		if destination ~= "" then
-			warp_queue_add(puncher, destination)
-		end
-	end
-	--]]
 })
 
 -- Emerald
@@ -414,6 +406,8 @@ minetest.register_node("warps:warpstone_emerald", {
 	sunlight_propagates = true,
 	walkable = false,
 	paramtype = "light",
+	paramtype2 = "facedir",
+	use_texture_alpha = true,
 	groups = {cracky = default.dig.glass},
 	light_source = 13,
 	sounds = default.node_sound_glass_defaults(),
@@ -444,6 +438,8 @@ minetest.register_node("warps:warpstone_ruby", {
 	sunlight_propagates = true,
 	walkable = false,
 	paramtype = "light",
+	paramtype2 = "facedir",
+	use_texture_alpha = true,
 	groups = {cracky = default.dig.glass},
 	light_source = 13,
 	sounds = default.node_sound_glass_defaults(),
@@ -470,6 +466,8 @@ minetest.register_node("warps:warpstone_mese", {
 	sunlight_propagates = true,
 	walkable = false,
 	paramtype = "light",
+	paramtype2 = "facedir",
+	use_texture_alpha = true,
 	groups = {cracky = default.dig.glass},
 	light_source = 13,
 	sounds = default.node_sound_glass_defaults(),
