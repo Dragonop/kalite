@@ -84,7 +84,7 @@ local warp_queue_add = function(player, dest)
 		pos = player:getpos(),
 		p = player,
 		w = dest,
-		sh = minetest.sound_play("warps_woosh", {pos = player:getpos(), gain = 0.5, max_hear_distance = 8})
+		sh = minetest.sound_play("warps_woosh", {pos = player:getpos(), gain = 0.75, max_hear_distance = 8})
 	})
 	minetest.chat_send_player(player:get_player_name(), "Don't move for " .. warps_freeze .. " seconds!")
 	if queue_state == 0 then
@@ -320,7 +320,7 @@ minetest.register_abm({
 	interval = 1.5,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-	    for k, v in ipairs(minetest.get_objects_inside_radius(pos, 3)) do --5
+	    for k, v in ipairs(minetest.get_objects_inside_radius(pos, 3)) do
 		local hand = v:get_wielded_item()
 		if hand:get_name() == "warps:warpstone_amethyst" then
 			-- Automatically go to next warp
@@ -332,7 +332,6 @@ minetest.register_abm({
 })
 
 minetest.register_alias("warps:warpstone", "warps:warpstone_amethyst")
-
 minetest.register_node("warps:warpstone_amethyst", {
 	visual = "mesh",
 	mesh = "warps_warpstone.obj",
@@ -343,8 +342,10 @@ minetest.register_node("warps:warpstone_amethyst", {
 	sunlight_propagates = true,
 	walkable = false,
 	paramtype = "light",
+	paramtype2 = "facedir",
+	use_texture_alpha = true,
 	groups = {cracky = default.dig.glass},
-	light_source = 13, --8
+	light_source = 13,
 	sounds = default.node_sound_glass_defaults(),
 	selection_box = {
 		type = "fixed",
