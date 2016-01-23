@@ -65,9 +65,6 @@ end)
 
 function minetest.handle_node_drops(pos, drops, digger)
 	local inv = digger:get_inventory()
-	--[[if minetest.setting_getbool("creative_mode") and digger and digger:is_player() then
-		inv = digger:get_inventory()
-	end--]]
 	for _,item in ipairs(drops) do
 		local count, name
 		if type(item) == "string" then
@@ -78,10 +75,7 @@ function minetest.handle_node_drops(pos, drops, digger)
 			name = item:get_name()
 		end
 		local hand = digger:get_wielded_item():get_name()
-		print(hand)
-		print(name)
 		if hand and (hand == name or hand == "") then
-			print("conditions apply")
 			if inv and inv:room_for_item("main", {name = name, count = count}) then
 				inv:add_item("main", {name = name, count = count})
 				return
