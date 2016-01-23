@@ -65,8 +65,11 @@ minetest.register_node("coffin:bones", {
 		return true
 	end,
 	on_punch = function(pos, node, puncher, pointed_thing)
+		local t1 = os.clock()
 		local meta = minetest.get_meta(pos)
 		local owner = meta:get_string("owner")
+		-- Remove owner if Node Timer reaches 0
+		-- Possibly use global tracker in leu, or in addition
 		if owner then
 			if owner == puncher:get_player_name() then
 				local inv = meta:get_inventory()
@@ -84,6 +87,18 @@ minetest.register_node("coffin:bones", {
 				minetest.remove_node(pos)
 				minetest.add_item(pos, {name = "coffin:bone"})
 			end
+		end
+		print(string.format("Elapsed time: %.2fms", (os.clock() - t1) * 1000))
+	end,
+	on_timer = function(pos, elapsed)
+		print("on_timer() called")
+		local meta = minetest.get_meta(pos)
+		local time = meta:get_int("time") + elapsed
+		if time >= 60 then
+			print("timer is >= 60")
+		else
+			meta:set_int("time", time)
+			return true
 		end
 	end
 })

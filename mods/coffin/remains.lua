@@ -59,6 +59,11 @@ minetest.register_on_dieplayer(function(player)
 			inv:add_item("main", player_inv:get_stack("craft", i))
 			player_inv:set_stack("craft", i, nil)
 		end
+
+		meta:set_int("time", 60)
+		minetest.after(0.1, function ()
+			minetest.get_node_timer(pos):start(1)
+		end)
 	end
     end)
 end)
