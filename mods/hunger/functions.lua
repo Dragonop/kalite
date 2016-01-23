@@ -278,35 +278,32 @@ function hunger.item_eat(hunger_change, replace_with_item, poisen, heal, sound)
 end
 
 
--- This doesn't belong here?
--- FIXME FIXME FIXME
+-- FIXME: This doesn't belong here!
 
 minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
 	if not hitter:is_player() then return end
 	local owner = minetest.setting_get("name")
 
-	-- Don't bother affecting named owner
 	if player:get_player_name() == owner then
 		return true
 	elseif damage > 0 then
-		-- if nodes in area match warpstone_mese then do no damage and teleport attacker to jail
-		if hitter:get_player_name() == owner then -- No action if named owner
+		if hitter:get_player_name() == owner then
 			return false
 		end
 
 		local pos = player:getpos()
-		if minetest.find_node_near(pos, 8, {"warps:warpstone_mese"}) then
-			hitter:setpos({x = 0, y = -27000, z = 0}) -- Make a variable
+		if minetest.find_node_near(pos, 8, {"warps:warpstone_mese"})
+				or player:get_wielded_item():get_name() == "warps:warpstone_mese" then
+			hitter:setpos({x = 0, y = -27000, z = 0})
 	 		hud.change_item(hitter, "hunger", {text = "hunger_statbar_poisen.png"})
-			poisenp(1.0, 1, 0, hitter) -- Poison attacker
+			poisenp(1.0, 1, 0, hitter)
 			local hitter_name = hitter:get_player_name()
 			minetest.log("action", hitter_name .. " has been sent to jail.")
 			minetest.chat_send_player(hitter_name, "You've been sent to jail!  Please try to be more careful.")
 			return true
 		end
 
-		--poisen
 		hud.change_item(hitter, "hunger", {text = "hunger_statbar_poisen.png"})
-		poisenp(1.0, 5, 0, hitter)
+		poisenp(1.0, 1, 0, hitter)
 	end
 end)
