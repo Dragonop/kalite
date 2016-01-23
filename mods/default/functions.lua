@@ -198,8 +198,8 @@ minetest.register_abm({
 -- Ice and water
 minetest.register_abm({
 	nodenames = "default:ice",
-	interval = 30,
-	chance = 1,
+	interval = 15,
+	chance = 2,
 	action = function(pos, node)
 		if (minetest.get_node_light(pos)) < 13 then
 			return
@@ -231,8 +231,8 @@ minetest.register_abm({
 minetest.register_abm({
 	nodenames = {"default:water_source"},
 	neighbors = {"default:water_source"},
-	interval = 1,
-	chance = 1,
+	interval = 5,
+	chance = 2,
 	catch_up = false,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		if get_water(pos) == 9 then
@@ -243,11 +243,12 @@ minetest.register_abm({
 
 minetest.register_abm({
 	nodenames = {"default:water_source_infinite"},
-	interval = 1,
+	neighbors = {"default:water_source"},
+	interval = 2,
 	chance = 1,
 	catch_up = false,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		if get_water(pos) ~= 6 then
+		if get_water(pos) < 7 then
 			minetest.set_node(pos, {name = "default:water_source"})
 		end
 	end
