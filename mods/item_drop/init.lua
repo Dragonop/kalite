@@ -9,7 +9,7 @@ minetest.register_globalstep(function(dtime)
 					if inv and inv:room_for_item("main", ItemStack(object:get_luaentity().itemstring)) then
 						inv:add_item("main", ItemStack(object:get_luaentity().itemstring))
 						if object:get_luaentity().itemstring ~= "" then
-							minetest.sound_play("item_drop_pickup", {pos = pos, gain = 0.3, max_hear_distance = 8}) -- max_hear_distance = 16
+							minetest.sound_play("item_drop_pickup", {pos = pos, gain = 0.25, max_hear_distance = 7})
 						end
 						object:get_luaentity().itemstring = ""
 						object:remove()
@@ -42,7 +42,7 @@ minetest.register_globalstep(function(dtime)
 								if inv:room_for_item("main", ItemStack(object:get_luaentity().itemstring)) then
 									inv:add_item("main", ItemStack(object:get_luaentity().itemstring))
 									if object:get_luaentity().itemstring ~= "" then
-										minetest.sound_play("item_drop_pickup", {pos = pos, gain = 0.3, max_hear_distance = 8})
+										minetest.sound_play("item_drop_pickup", {pos = pos, gain = 0.25, max_hear_distance = 7})
 									end
 									object:get_luaentity().itemstring = ""
 									object:remove()
@@ -63,12 +63,11 @@ minetest.register_globalstep(function(dtime)
 	end
 end)
 
----[[
 function minetest.handle_node_drops(pos, drops, digger)
-	local inv
-	if minetest.setting_getbool("creative_mode") and digger and digger:is_player() then
+	local inv = digger:get_inventory()
+	--[[if minetest.setting_getbool("creative_mode") and digger and digger:is_player() then
 		inv = digger:get_inventory()
-	end
+	end--]]
 	for _,item in ipairs(drops) do
 		local count, name
 		if type(item) == "string" then
@@ -78,7 +77,39 @@ function minetest.handle_node_drops(pos, drops, digger)
 			count = item:get_count()
 			name = item:get_name()
 		end
-		if not inv or not inv:contains_item("main", ItemStack(name)) then
+		local hand = digger:get_wielded_item():get_name()
+		print(hand)
+		print(name)
+		if hand and (hand == name or hand == "") then
+			print("conditions apply")
+			if inv and inv:room_for_item("main", {name = name, count = count}) then
+				inv:add_item("main", {name = name, count = count})
+				return
+			else
+				for i=1,count do
+					local obj = minetest.add_item(pos, name)
+					if obj ~= nil then
+						obj:get_luaentity().collect = true
+						local x = math.random(1, 5)
+						if math.random(1,2) == 1 then
+							x = -x
+						end
+						local z = math.random(1, 5)
+						if math.random(1,2) == 1 then
+							z = -z
+						end
+						obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
+						
+						-- FIXME this doesnt work for deactiveted objects
+						if minetest.setting_get("remove_items") and tonumber(minetest.setting_get("remove_items")) then
+							minetest.after(tonumber(minetest.setting_get("remove_items")), function(obj)
+								obj:remove()
+							end, obj)
+						end
+					end
+				end
+			end
+		else
 			for i=1,count do
 				local obj = minetest.add_item(pos, name)
 				if obj ~= nil then
@@ -104,7 +135,6 @@ function minetest.handle_node_drops(pos, drops, digger)
 		end
 	end
 end
---]]
 
 if minetest.setting_getbool("log_mods") then
 	minetest.log("action", "[item_drop] loaded.")

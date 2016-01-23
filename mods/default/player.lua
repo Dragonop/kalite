@@ -122,7 +122,7 @@ end
 function default.player_set_textures(player, textures)
 	local name = player:get_player_name()
 	player_textures[name] = textures
-	player:set_properties({textures = textures,})
+	player:set_properties({textures = textures})
 end
 
 function default.player_set_animation(player, anim_name, speed)
@@ -141,6 +141,7 @@ end
 
 -- Update appearance when the player joins
 minetest.register_on_joinplayer(function(player)
+	default.player_attached[player:get_player_name()] = false
 	default.player_set_model(player, "character.x")
 	player:set_local_animation({x=0, y=79}, {x=168, y=187}, {x=189, y=198}, {x=200, y=219}, 30)
 
@@ -158,6 +159,7 @@ end)
 
 -- Localize for better performance.
 local player_set_animation = default.player_set_animation
+local player_attached = default.player_attached
 
 -- Check each player and apply animations
 minetest.register_globalstep(function(dtime)
@@ -165,7 +167,7 @@ minetest.register_globalstep(function(dtime)
 		local name = player:get_player_name()
 		local model_name = player_model[name]
 		local model = model_name and models[model_name]
-		if model and not default.player_attached[name] then
+		if model and not player_attached[name] then
 			local controls = player:get_player_control()
 			local walking = false
 			local animation_speed_mod = model.animation_speed or 30
