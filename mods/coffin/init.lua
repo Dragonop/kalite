@@ -94,9 +94,10 @@ minetest.register_node("coffin:bones", {
 		print("on_timer() called")
 		local meta = minetest.get_meta(pos)
 		local time = meta:get_int("time") + elapsed
-		if time >= 60 then
-			print("timer is >= 60")
+		if time > 59 then
+			print("gt")
 		else
+			print(time)
 			meta:set_int("time", time)
 			return true
 		end
