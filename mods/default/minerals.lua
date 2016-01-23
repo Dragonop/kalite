@@ -47,7 +47,6 @@ local function duengen(pointed_thing)
 		return
 	end
 
-	--print(n.name)
 	local stage = ""
 	if n.name == "default:sapling" and minetest.get_node_light(pos) then
 		if math.random(1, 20) < 5 then
@@ -83,12 +82,10 @@ local function duengen(pointed_thing)
 		for i = -2, 3, 1 do
 		for j = -3, 2, 1 do
 			local p = {x = pos.x + i, y = pos.y, z = pos.z + j}
-			--pos = 
 			local n2 = minetest.get_node_or_nil(p)
 
 			if n2 and n2.name and n2.name == "default:dry_dirt" and minetest.find_node_near(p, 6, {"group:water"}) then
 				if math.random(1, 6) > 3 then
-					--minetest.env:set_node(p, {name = plant_tab[math.random(0, rnd_max)]})
 					minetest.set_node(pointed_thing.under, {name = "default:grass"})
 				else
 					minetest.set_node(p, {name = "default:grass"})
@@ -104,13 +101,14 @@ end
 
 minetest.register_craftitem("default:minerals", {
 	description = "Minerals",
-	inventory_image = "default_bone_meal.png", --"default_minerals.png",
+	inventory_image = "default_bone_meal.png",
 	liquids_pointable = false,
 	stack_max = 60,
 	on_use = function(itemstack, user, pointed_thing)
 		if pointed_thing.type == "node" then
 			duengen(pointed_thing)
-			return itemstack:take_item()
+			itemstack:take_item()
+			return itemstack
 		end
 	end
 })
@@ -123,7 +121,8 @@ minetest.register_craftitem("default:bone_meal", {
 	on_use = function(itemstack, user, pointed_thing)
 		if pointed_thing.type == "node" then
 			duengen(pointed_thing)
-			return itemstack:take_item()
+			itemstack:take_item()
+			return itemstack
 		end
 	end
 })
