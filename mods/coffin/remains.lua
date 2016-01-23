@@ -1,5 +1,5 @@
 minetest.register_on_dieplayer(function(player)
-    minetest.after(0.25, function ()
+    --minetest.after(0.05, function ()
 	local pos = player:getpos()
 	pos.x = math.floor(pos.x + 0.5)
 	pos.y = math.floor(pos.y - 0.5)
@@ -63,5 +63,5 @@ minetest.register_on_dieplayer(function(player)
 		meta:set_int("time", 0.1)
 		minetest.get_node_timer(pos):start(0.1)
 	end
-    end)
+    --end)
 end)
