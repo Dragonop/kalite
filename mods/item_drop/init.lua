@@ -65,7 +65,11 @@ end)
 
 function minetest.handle_node_drops(pos, drops, digger)
 	local inv = digger:get_inventory()
-	for _,item in ipairs(drops) do
+	local hand = digger:get_wielded_item()
+	local hand_name = hand:get_name()
+	local hand_count = hand:get_count()
+	local hand_max = hand:get_stack_max()
+	for _, item in ipairs(drops) do
 		local count, name
 		if type(item) == "string" then
 			count = 1
@@ -74,25 +78,27 @@ function minetest.handle_node_drops(pos, drops, digger)
 			count = item:get_count()
 			name = item:get_name()
 		end
-		local hand = digger:get_wielded_item():get_name()
-		if hand and (hand == name or hand == "") then
-			if inv and inv:room_for_item("main", {name = name, count = count}) then
-				inv:add_item("main", {name = name, count = count})
-				return
+		if not hand_name then return end
+		if (hand_name == name and hand_count ~= hand_max)
+				or hand_name == "" then
+			if hand_name == "" then
+				digger:set_wielded_item(name .. " " .. count)
+			elseif inv and hand_count ~= hand_max then
+				digger:set_wielded_item(name .. " " .. hand_count + count)
 			else
-				for i=1,count do
+				for i = 1, count do -- TODO Since most nearby items are merged, add in bulk
 					local obj = minetest.add_item(pos, name)
 					if obj ~= nil then
 						obj:get_luaentity().collect = true
 						local x = math.random(1, 5)
-						if math.random(1,2) == 1 then
+						if math.random(1, 2) == 1 then
 							x = -x
 						end
 						local z = math.random(1, 5)
-						if math.random(1,2) == 1 then
+						if math.random(1, 2) == 1 then
 							z = -z
 						end
-						obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
+						obj:setvelocity({x = 1 / x, y = obj:getvelocity().y, z = 1 / z})
 						
 						-- FIXME this doesnt work for deactiveted objects
 						if minetest.setting_get("remove_items") and tonumber(minetest.setting_get("remove_items")) then
@@ -104,19 +110,19 @@ function minetest.handle_node_drops(pos, drops, digger)
 				end
 			end
 		else
-			for i=1,count do
+			for i = 1, count do
 				local obj = minetest.add_item(pos, name)
 				if obj ~= nil then
 					obj:get_luaentity().collect = true
 					local x = math.random(1, 5)
-					if math.random(1,2) == 1 then
+					if math.random(1, 2) == 1 then
 						x = -x
 					end
 					local z = math.random(1, 5)
-					if math.random(1,2) == 1 then
+					if math.random(1, 2) == 1 then
 						z = -z
 					end
-					obj:setvelocity({x=1/x, y=obj:getvelocity().y, z=1/z})
+					obj:setvelocity({x = 1 / x, y = obj:getvelocity().y, z = 1 / z})
 					
 					-- FIXME this doesnt work for deactiveted objects
 					if minetest.setting_get("remove_items") and tonumber(minetest.setting_get("remove_items")) then
