@@ -252,13 +252,13 @@ minetest.register_globalstep(function(dtime)
 					number = 0xFFFFFF,
 					position = {x=0, y=1},
 					offset = {x=8, y=-8},
-					text = "ch: " .. channel[name] .. " / " .. "n_ppl: " .. tostring(#chatters),
+					text = "Channel: " .. channel[name] .. "\n" .. "Players: " .. tostring(#chatters),
 					scale = {x=200, y=60},
 					alignment = {x=1, y=-1},
 				})
 				return
 			else
-				player:hud_change(hud.comms, "text", "ch: " .. channel[name] .. " / " .. "n_ppl: " .. tostring(#chatters))
+				player:hud_change(hud.comms, "text", "Channel: " .. channel[name] .. "\n" .. "Players: " .. tostring(#chatters))
 			end
 		else
 			local hud = shout.hud[name]
