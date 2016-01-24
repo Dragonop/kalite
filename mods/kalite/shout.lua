@@ -227,40 +227,45 @@ minetest.register_chatcommand("msg", {
 minetest.register_globalstep(function(dtime)
 	for _, player in pairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
-		if player:get_wielded_item():get_name() ~= "kalite:walkie_talkie" then
-			if shout.hud[name] then
+		local pos = vector.round(player:getpos())
+
+		local wielded = player:get_wielded_item():get_name()
+		if not wielded then return end
+
+		if wielded == "kalite:walkie_talkie" then
+			local chatters = {}
+			for _, player in pairs(minetest.get_connected_players()) do
+				if player:get_player_name() ~= name then
+					if player:get_inventory():contains_item("main", "kalite:walkie_talkie")
+							and channel[name] == channel[player:get_player_name()] then
+						table.insert(chatters, player:get_player_name())
+					end
+				end
+			end
+			local hud = shout.hud[name]
+			if not hud then
+				hud = {}
+				shout.hud[name] = hud
+				hud.comms = player:hud_add({
+					hud_elem_type = "text",
+					name = "Comms",
+					number = 0xFFFFFF,
+					position = {x=0, y=1},
+					offset = {x=8, y=-8},
+					text = "ch: " .. channel[name] .. " / " .. "n_ppl: " .. tostring(#chatters),
+					scale = {x=200, y=60},
+					alignment = {x=1, y=-1},
+				})
+				return
+			else
+				player:hud_change(hud.comms, "text", "ch: " .. channel[name] .. " / " .. "n_ppl: " .. tostring(#chatters))
+			end
+		else
+			local hud = shout.hud[name]
+			if hud then
 				player:hud_remove(shout.hud[name].comms)
 				shout.hud[name] = nil
 			end
-			return
-		end
-		local pos = vector.round(player:getpos())
-		local vicinity = {}
-		for _, player in pairs(minetest.get_connected_players()) do
-			if player:get_player_name() ~= name then
-				if player:get_inventory():contains_item("main", "kalite:walkie_talkie")
-						and channel[name] == channel[player:get_player_name()] then
-					table.insert(vicinity, player:get_player_name())
-				end
-			end
-		end
-		local hud = shout.hud[name]
-		if not hud then
-			hud = {}
-			shout.hud[name] = hud
-			hud.comms = player:hud_add({
-				hud_elem_type = "text",
-				name = "Comms",
-				number = 0xFFFFFF,
-				position = {x=0, y=1},
-				offset = {x=8, y=-8},
-				text = "ch: " .. channel[name] .. " / " .. "n_ppl: " .. tostring(#vicinity),
-				scale = {x=200, y=60},
-				alignment = {x=1, y=-1},
-			})
-			return
-		else
-			player:hud_change(hud.comms, "text", "ch: " .. channel[name] .. " / " .. "n_ppl: " .. tostring(#vicinity))
 		end
 	end
 end)
