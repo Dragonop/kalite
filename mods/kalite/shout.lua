@@ -55,7 +55,9 @@ minetest.register_on_joinplayer(function(player)
 end)
 
 minetest.register_on_leaveplayer(function(player)
-	channel[player:get_player_name()] = nil
+	local name = player:get_player_name()
+	channel[name] = nil
+	shout.hud[name] = nil
 end)
 
 -- Parameter
@@ -224,8 +226,14 @@ minetest.register_chatcommand("msg", {
 
 minetest.register_globalstep(function(dtime)
 	for _, player in pairs(minetest.get_connected_players()) do
-		if player:get_wielded_item():get_name() ~= "kalite:walkie_talkie" then return end
 		local name = player:get_player_name()
+		if player:get_wielded_item():get_name() ~= "kalite:walkie_talkie" then
+			if shout.hud[name] then
+				player:hud_remove(shout.hud[name].comms)
+				shout.hud[name] = nil
+			end
+			return
+		end
 		local pos = vector.round(player:getpos())
 		local vicinity = {}
 		for _, player in pairs(minetest.get_connected_players()) do
@@ -246,7 +254,7 @@ minetest.register_globalstep(function(dtime)
 				number = 0xFFFFFF,
 				position = {x=0, y=1},
 				offset = {x=8, y=-8},
-				text = tostring(#vicinity),
+				text = "ch: " .. channel[name] .. " / " .. "n_ppl: " .. tostring(#vicinity),
 				scale = {x=200, y=60},
 				alignment = {x=1, y=-1},
 			})
