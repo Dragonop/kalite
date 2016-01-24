@@ -1,5 +1,4 @@
 minetest.register_on_dieplayer(function(player)
-    --minetest.after(0.05, function ()
 	local pos = player:getpos()
 	pos.x = math.floor(pos.x + 0.5)
 	pos.y = math.floor(pos.y - 0.5)
@@ -43,8 +42,25 @@ minetest.register_on_dieplayer(function(player)
 			player_inv:set_stack("craft", i, nil)
 		end
 	else
+		nn = minetest.get_node(pos).name
 		if nn ~= "air" then
 			pos = minetest.find_node_near(pos, 3, "air") or pos
+			if minetest.get_node(pos).name ~= "air" then
+				for i = 1, player_inv:get_size("main") do
+					local stack = player_inv:get_stack("main", i)
+					if not stack:is_empty() then
+						local p = {
+							x = pos.x + math.random(0, 5) / 5 - 0.5,
+							y = pos.y,
+							z = pos.z + math.random(0, 5) / 5 - 0.5
+						}
+						minetest.add_item(p, stack)
+					end
+				end
+				player_inv:set_list("main", {})
+				player_inv:set_list("craft", {})
+				return
+			end
 		end
 		minetest.set_node(pos, {name = "coffin:bones", param2 = param2})
 		meta = minetest.get_meta(pos)
@@ -66,5 +82,4 @@ minetest.register_on_dieplayer(function(player)
 		meta:set_int("time", 0.1)
 		minetest.get_node_timer(pos):start(0.1)
 	end
-    --end)
 end)
