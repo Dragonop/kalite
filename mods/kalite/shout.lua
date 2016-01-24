@@ -1,9 +1,11 @@
 -- Limit chat by distance [shout]
--- by Muhammad Rifqi Priyo Susanto (srifqi)
--- Changes Copyright 2016 James Stevenson
+-- Original mod by Muhammad Rifqi Priyo Susanto (srifqi)
+
+-- Copyright 2016 James Stevenson
 -- License: GPL3
 
 shout = {}
+shout.hud = {}
 local channel = {}
 
 
@@ -167,7 +169,7 @@ end)
 minetest.register_chatcommand("me", {
 	params = "<action>",
 	description = "Perform an action for nearby players.",
-	privs = {shout=true},
+	privs = {shout = true},
 	func = function(name, param)
 		local shouter = minetest.get_player_by_name(name)
 		local spos = shouter:getpos()
@@ -219,3 +221,38 @@ minetest.register_chatcommand("msg", {
 		end
         end
 })
+
+minetest.register_globalstep(function(dtime)
+	for _, player in pairs(minetest.get_connected_players()) do
+		if player:get_wielded_item():get_name() ~= "kalite:walkie_talkie" then return end
+		local name = player:get_player_name()
+		local pos = vector.round(player:getpos())
+		local vicinity = {}
+		for _, player in pairs(minetest.get_connected_players()) do
+			if player:get_player_name() ~= name then
+				if player:get_inventory():contains_item("main", "kalite:walkie_talkie")
+						and channel[name] == channel[player:get_player_name()] then
+					table.insert(vicinity, player:get_player_name())
+				end
+			end
+		end
+		local hud = shout.hud[name]
+		if not hud then
+			hud = {}
+			shout.hud[name] = hud
+			hud.comms = player:hud_add({
+				hud_elem_type = "text",
+				name = "Comms",
+				number = 0xFFFFFF,
+				position = {x=0, y=1},
+				offset = {x=8, y=-8},
+				text = tostring(#vicinity),
+				scale = {x=200, y=60},
+				alignment = {x=1, y=-1},
+			})
+			return
+		else
+			player:hud_change(hud.comms, "text", "ch: " .. channel[name] .. " / " .. "n_ppl: " .. tostring(#vicinity))
+		end
+	end
+end)
