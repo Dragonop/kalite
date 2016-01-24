@@ -782,3 +782,14 @@ stairs.register_shape("plastic_grass", "kalite:plastic_grass",
 	"Plastic Grass Innerstair",
 	"Plastic Grass Outerstair",
 	default.node_sound_stone_defaults())
+
+-- Dirt
+stairs.register_shape("dirt", "default:dry_dirt",
+	{crumbly = default.dig.dirt},
+	{"default_dry_dirt.png"},
+	"Dirt Stair",
+	"Dirt Slab",
+	"Dirt Microslab",
+	"Dirt Innerstair",
+	"Dirt Outerstair",
+	default.node_sound_dirt_defaults())
