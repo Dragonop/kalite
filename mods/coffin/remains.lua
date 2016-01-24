@@ -43,6 +43,9 @@ minetest.register_on_dieplayer(function(player)
 			player_inv:set_stack("craft", i, nil)
 		end
 	else
+		if nn ~= "air" then
+			pos = minetest.find_node_near(pos, 3, "air") or pos
+		end
 		minetest.set_node(pos, {name = "coffin:bones", param2 = param2})
 		meta = minetest.get_meta(pos)
 		meta:set_string("infotext", name .. "'s bones")
