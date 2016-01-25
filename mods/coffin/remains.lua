@@ -64,7 +64,7 @@ minetest.register_on_dieplayer(function(player)
 		end
 		minetest.set_node(pos, {name = "coffin:bones", param2 = param2})
 		meta = minetest.get_meta(pos)
-		meta:set_string("infotext", name .. "'s bones")
+		meta:set_string("infotext", name .. "'s fresh bones")
 		meta:set_string("owner", name)
 
 		local inv = meta:get_inventory()

@@ -44,6 +44,29 @@ minetest.register_craft({output="coffin:bones",
 	}
 })
 
+minetest.register_abm({
+	nodenames = {"coffin:bones"},
+	interval = 1.0,
+	chance = 1,
+	catch_up = false,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		local meta = minetest.get_meta(pos)
+		local timer = minetest.get_node_timer(pos)
+		local current_time = meta:get_int("time")
+		if not timer:is_started() then
+			if current_time < 59 then
+				timer:set(0.1, current_time)
+			end
+		end
+		--[[
+		print("Owner: " .. meta:get_string("owner"))
+		print("Timer started: " .. tostring(timer:is_started()))
+		print(tostring(current_time))
+		print("--")
+		--]]
+	end
+})
+
 minetest.register_node("coffin:bones", {
 	description = "Bones",
 	tiles = {
@@ -65,13 +88,15 @@ minetest.register_node("coffin:bones", {
 		return true
 	end,
 	on_punch = function(pos, node, puncher, pointed_thing)
-		local t1 = os.clock()
 		local meta = minetest.get_meta(pos)
 		local owner = meta:get_string("owner")
 		-- Remove owner if Node Timer reaches 0
 		-- Possibly use global tracker in leu, or in addition
+		-- Add ABM to determine whether owned bones are counting down,
+		-- or broken, and should be unlocked.
 		if owner then
-			if owner == puncher:get_player_name() then
+			if owner == puncher:get_player_name()
+					or owner == "" then
 				local inv = meta:get_inventory()
 				for i = 1, inv:get_size("main") do
 					local stack = inv:get_stack("main", i)
@@ -88,16 +113,16 @@ minetest.register_node("coffin:bones", {
 				minetest.add_item(pos, {name = "coffin:bone"})
 			end
 		end
-		print(string.format("Elapsed time: %.2fms", (os.clock() - t1) * 1000))
 	end,
 	on_timer = function(pos, elapsed)
-		print("on_timer() called")
 		local meta = minetest.get_meta(pos)
 		local time = meta:get_int("time") + elapsed
-		if time > 59 then
-			print("gt")
+		if time >= 60 then
+			local oldname = meta:get_string("owner")
+			meta:set_string("owner", "")
+			meta:set_string("infotext", oldname .. "'s old bones")
+			minetest.get_node_timer(pos):stop()
 		else
-			print(time)
 			meta:set_int("time", time)
 			return true
 		end
