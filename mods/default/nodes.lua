@@ -334,6 +334,7 @@ minetest.register_node("default:junglegrass", {
 	walkable = false,
 	buildable_to = true,
 	is_ground_content = true,
+	sunlight_propagates = true,
 	groups = {
 		dig = default.dig.instant,
 		flammable = 2,
