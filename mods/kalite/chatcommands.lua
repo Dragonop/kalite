@@ -1,8 +1,10 @@
 minetest.register_chatcommand("killme", {
         description = "Set HP to zero",
         func = function(playerName, param)
-                minetest.after(0.1, function()
-                        minetest.get_player_by_name(playerName):set_hp(0)
+		local player = minetest.get_player_by_name(playerName)
+                minetest.after(0.25, function()
+			player:set_hp(player:get_hp())
+			player:set_hp(0)
                 end)
         end
 })
@@ -10,9 +12,8 @@ minetest.register_chatcommand("killme", {
 minetest.register_chatcommand("reset", {
         description = "Reset position, respawn, and inventory",
         func = function(name, param)
-                minetest.after(0.1, function()
-                        local player = minetest.get_player_by_name(name)
-
+		local player = minetest.get_player_by_name(name)
+                minetest.after(0.25, function()
 			local spawnpoint = minetest.setting_get_pos("static_spawnpoint")
 			if spawnpoint then
 				player:setpos(spawnpoint)
