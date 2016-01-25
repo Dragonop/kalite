@@ -143,7 +143,7 @@ minetest.register_abm({
 		if n == "default:junglegrass" or string.match(n, "default:grass_") then
 			return
 		end 
-		if not minetest.find_node_near(pos, 6, {"group:water"}) then
+		if not minetest.find_node_near(pos, 6, {"group:water", "default:junglegrass"}) then
 			minetest.set_node(pos, {name = "default:dry_dirt"})
 		else
 			pos.y = pos.y + 1
