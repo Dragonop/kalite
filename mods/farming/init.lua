@@ -142,12 +142,13 @@ minetest.register_abm({
 			return
 		end 
 		if not minetest.find_node_near(pos, 6, {"group:water"}) then
-			minetest.set_node(pos, {name="default:dry_dirt"})
+			minetest.set_node(pos, {name = "default:dry_dirt"})
 		else
-			pos.y = pos.y+1
+			pos.y = pos.y + 1
 			local nn = minetest.get_node(pos).name
-			pos.y = pos.y-1
-			if minetest.registered_nodes[nn] and minetest.registered_nodes[nn].walkable then
+			pos.y = pos.y - 1
+			if minetest.registered_nodes[nn] and minetest.registered_nodes[nn].walkable
+					and not minetest.registered_nodes[nn].sunlight_propagates then
 				minetest.set_node(pos, {name="default:dry_dirt"})
 			end
 		end
