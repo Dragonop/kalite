@@ -66,13 +66,14 @@ minetest.register_entity("railcart:cart_entity", {
 			return
 		end	
 		if puncher:get_player_control().sneak then
-			if minetest.is_protected(self.object:getpos(), puncher:get_player_name()) then
-				return
-			end
 			if self.cart then
 				if self.cart.id then
-					railcart.allcarts[self.cart.id] = nil
-					railcart:save()
+					if self.cart.inv then
+						if not self.cart.inv:is_empty("main") then
+							return
+						end
+					end
+					railcart:remove_cart(self.cart.id)
 				end
 			end
 			self.object:remove()
@@ -87,6 +88,17 @@ minetest.register_entity("railcart:cart_entity", {
 			return
 		end
 		if self.cart and direction then
+			if self.driver then
+				direction = {x=0, y=0, z=0}
+				local ld = self.driver:get_look_dir()
+				if ld.y > -0.99 then
+					direction = {
+						x = railtrack:get_sign(ld.x),
+						z = railtrack:get_sign(ld.z),
+						y = self.cart.dir.y
+					}
+				end
+			end
 			local pos = vector.round(self.object:getpos())
 			local dir = vector.round(vector.normalize(direction))
 			local speed = railcart:velocity_to_speed(self.cart.vel)
@@ -158,22 +170,27 @@ minetest.register_craftitem("railcart:cart", {
 		if not name or pointed_thing.type ~= "node" then
 			return
 		end
-		local pos = pointed_thing.under
-		if not railtrack:is_railnode(pos) then
-			return
-		end
 		if not minetest.is_singleplayer() then
 			if not minetest.check_player_privs(name, {carts=true}) then
 				minetest.chat_send_player(name, "Requires carts privilege")
 				return
 			end
 		end
+		local pos = pointed_thing.under
+		if not railtrack:is_railnode(pos) then
+			return
+		end
+		local carts = railcart:get_carts_in_radius(pos, 0.9)
+		if #carts > 0 then
+			return
+		end
 		local cart = railcart.cart:new()
-		cart.id = #railcart.allcarts + 1
+		cart.id = railcart:get_new_id()
 		cart.inv = railcart:create_detached_inventory(cart.id)
-		cart.pos = pos
+		cart.pos = vector.new(pos)
 		cart.prev = vector.new(pos)
 		cart.accel = railtrack:get_acceleration(pos)
+		cart.dir = railcart:get_rail_direction(pos)
 		table.insert(railcart.allcarts, cart)
 		railcart:save()
 		if not minetest.setting_getbool("creative_mode") then
@@ -186,9 +203,9 @@ minetest.register_craftitem("railcart:cart", {
 minetest.register_craft({
 	output = "railcart:cart",
 	recipe = {
-		{"default:iron_ingot", "", "default:iron_ingot"},
-		{"default:iron_ingot", "", "default:iron_ingot"},
-		{"group:wood", "default:iron_ingot", "group:wood"},
+		{"default:steel_ingot", "", "default:steel_ingot"},
+		{"default:steel_ingot", "", "default:steel_ingot"},
+		{"group:wood", "default:steel_ingot", "group:wood"},
 	},
 })
 

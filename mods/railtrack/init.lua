@@ -169,21 +169,21 @@ minetest.register_tool("railtrack:inspector", {
 		minetest.show_formspec(name, "info", form)
 	end,
 })
---[[
+
 minetest.register_craft({
 	output = "railtrack:powerrail 2",
 	recipe = {
 		{"default:rail", "default:mese_crystal_fragment", "default:rail"},
 	}
 })
---]]
+
 minetest.register_craft({
 	output = "railtrack:brakerail 2",
 	recipe = {
 		{"default:rail", "default:coal_lump", "default:rail"},
 	}
 })
---[[
+
 minetest.register_craft({
 	output = "railtrack:switchrail 2",
 	recipe = {
@@ -197,4 +197,4 @@ minetest.register_craft({
 		{"default:rail", "default:diamond", "default:rail"},
 	}
 })
---]]
+
