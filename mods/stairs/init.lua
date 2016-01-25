@@ -351,7 +351,15 @@ function stairs.register_slab(subname, recipeitem, groups, images, description, 
 			end
 
 			return minetest.item_place(itemstack, placer, pointed_thing, param2)
-		end,
+		end,--[[
+		on_rightclick = function(pos, node, clicker, itemstack, pointed_thing)
+			local wield_item = clicker:get_wielded_item():get_name()
+			if wield_item == "stairs:slab_" .. subname and node.param2 <= 3 then
+				minetest.set_node(pointed_thing.under, {name = recipeitem, param2 = node.param2})
+				itemstack:take_item()
+				return itemstack
+			end
+		end--]]
 	})
 
 	minetest.register_craft({
