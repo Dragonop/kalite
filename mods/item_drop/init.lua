@@ -66,10 +66,15 @@ end)
 function minetest.handle_node_drops(pos, drops, digger)
 	local inv = digger:get_inventory()
 	local hand = digger:get_wielded_item()
-	local hand_name = hand:get_name()
-	local hand_count = hand:get_count()
-	local hand_max = hand:get_stack_max()
+	print("----")
+	print(dump(drops))
+	print("----")
+
 	for _, item in ipairs(drops) do
+		local hand_name = hand:get_name()
+		local hand_count = hand:get_count()
+		local hand_max = hand:get_stack_max()
+
 		local count, name
 		if type(item) == "string" then
 			count = 1
@@ -78,39 +83,23 @@ function minetest.handle_node_drops(pos, drops, digger)
 			count = item:get_count()
 			name = item:get_name()
 		end
-		if not hand_name then return end
-		if (hand_name == name and hand_count ~= hand_max)
-				or hand_name == "" then
-			if hand_name == "" then
-				digger:set_wielded_item(name .. " " .. count)
-			elseif inv and hand_count ~= hand_max then
-				digger:set_wielded_item(name .. " " .. hand_count + count)
-			else
-				for i = 1, count do -- TODO Since most nearby items are merged, add in bulk
-					local obj = minetest.add_item(pos, name)
-					if obj ~= nil then
-						obj:get_luaentity().collect = true
-						local x = math.random(1, 5)
-						if math.random(1, 2) == 1 then
-							x = -x
-						end
-						local z = math.random(1, 5)
-						if math.random(1, 2) == 1 then
-							z = -z
-						end
-						obj:setvelocity({x = 1 / x, y = obj:getvelocity().y, z = 1 / z})
-						
-						-- FIXME this doesnt work for deactiveted objects
-						if minetest.setting_get("remove_items") and tonumber(minetest.setting_get("remove_items")) then
-							minetest.after(tonumber(minetest.setting_get("remove_items")), function(obj)
-								obj:remove()
-							end, obj)
-						end
-					end
-				end
-			end
+
+		if not inv then
+			return
+		end
+
+		if (hand_name == name and hand_count ~= hand_max) then
+			digger:set_wielded_item(name .. " " .. hand_count + count) -- FIXME Will go beyond hand_max
+			minetest.sound_play("item_drop_pickup", {pos = pos, gain = 0.25, max_hear_distance = 7})
+			print("adding " .. name .. " " .. count .. " to wielded stack")
+
+		elseif hand_name == "" then
+			digger:set_wielded_item(name .. " " .. count)
+			minetest.sound_play("item_drop_pickup", {pos = pos, gain = 0.25, max_hear_distance = 7})
+			print("placing " .. name .. " " .. count .. " in empty hand")
+
 		else
-			for i = 1, count do
+			for i = 1, count do -- TODO Since most nearby items are merged, add in bulk
 				local obj = minetest.add_item(pos, name)
 				if obj ~= nil then
 					obj:get_luaentity().collect = true
@@ -124,7 +113,7 @@ function minetest.handle_node_drops(pos, drops, digger)
 					end
 					obj:setvelocity({x = 1 / x, y = obj:getvelocity().y, z = 1 / z})
 					
-					-- FIXME this doesnt work for deactiveted objects
+					-- FIXME this doesnt work for deactivated objects
 					if minetest.setting_get("remove_items") and tonumber(minetest.setting_get("remove_items")) then
 						minetest.after(tonumber(minetest.setting_get("remove_items")), function(obj)
 							obj:remove()
@@ -132,10 +121,11 @@ function minetest.handle_node_drops(pos, drops, digger)
 					end
 				end
 			end
+			print("dropping " .. name .. " " .. count)
 		end
 	end
 end
 
 if minetest.setting_getbool("log_mods") then
-	minetest.log("action", "[item_drop] loaded.")
+	minetest.log("action", "[item_drop] Loaded")
 end
