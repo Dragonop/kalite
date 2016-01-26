@@ -112,6 +112,19 @@ minetest.register_node("default:grass", {
 	stack_max = 40
 })
 
+minetest.register_node("default:dry_grass", {
+	description = "Dry Grass",
+	tiles = {"default_dry_grass.png",
+		"default_dirt.png",
+		{name = "default_dirt.png^default_dry_grass_side.png",
+			tileable_vertical = false}},
+	groups = {crumbly = default.dig.dirt, soil = 1},
+	drop = "default:dry_dirt",
+	sounds = default.node_sound_dirt_defaults({
+		footstep = {name = "default_grass_footstep", gain = 0.4},
+	})
+})
+
 minetest.register_node("default:dirt_with_snow", {
 	description = "Dirt with Snow",
 	tiles = {"default_snow.png", "default_dry_dirt.png", "default_dry_dirt.png^default_snow_side.png"},
