@@ -545,6 +545,7 @@ minetest.register_node("default:fence_wood", {
 	--is_ground_content = false,
 	inventory_image = "default_fence.png",
 	wield_image = "default_fence.png",
+	sunlight_propagates = true,
 	paramtype = "light",
 	selection_box = {
 		type = "fixed",
@@ -556,7 +557,7 @@ minetest.register_node("default:fence_wood", {
 			{-0.2, -0.5, -0.2, 0.2, 1.0, 0.2},
 		},
 	},
-	groups = {choppy=default.dig.fence, flammable=2},
+	groups = {choppy = default.dig.fence, flammable = 2},
 	sounds = default.node_sound_wood_defaults(),
 	stack_max = 60
 })
@@ -591,6 +592,7 @@ minetest.register_node("default:ladder", {
 	is_ground_content = false,
 	inventory_image = "default_ladder.png",
 	wield_image = "default_ladder.png",
+	sunlight_propagates = true,
 	paramtype = "light",
 	paramtype2 = "wallmounted",
 	walkable = false,
@@ -1384,10 +1386,11 @@ minetest.register_node("default:sapling", {
 minetest.register_node("default:dry_shrub", {
 	description = "Dry Shrub",
 	drawtype = "plantlike",
-	visual_scale = 0.8,
+	visual_scale = 1, -- 0.8
 	tiles = {"default_dry_shrub.png"},
 	inventory_image = "default_dry_shrub.png",
 	wield_image = "default_dry_shrub.png",
+	sunlight_propagates = true,
 	paramtype = "light",
 	walkable = false,
 	buildable_to = true,
