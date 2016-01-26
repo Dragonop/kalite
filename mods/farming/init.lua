@@ -167,6 +167,7 @@ local function hoe_on_use(itemstack, user, pointed_thing, uses)
 	if not pt then
 		return
 	end
+
 	if pt.type ~= "node" then
 		return
 	end
@@ -174,6 +175,10 @@ local function hoe_on_use(itemstack, user, pointed_thing, uses)
 	local under = minetest.get_node(pt.under)
 	local p = {x=pt.under.x, y=pt.under.y+1, z=pt.under.z}
 	local above = minetest.get_node(p)
+
+	if minetest.is_protected(pt.under, user:get_player_name()) then
+		return
+	end
 	
 	-- return if any of the nodes is not registered
 	if not minetest.registered_nodes[under.name] then
