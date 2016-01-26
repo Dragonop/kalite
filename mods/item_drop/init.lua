@@ -65,12 +65,15 @@ end)
 
 function minetest.handle_node_drops(pos, drops, digger)
 	local inv = digger:get_inventory()
-	local hand = digger:get_wielded_item()
+--[[
 	print("----")
 	print(dump(drops))
 	print("----")
+--]]
 
 	for _, item in ipairs(drops) do
+
+		local hand = digger:get_wielded_item()
 		local hand_name = hand:get_name()
 		local hand_count = hand:get_count()
 		local hand_max = hand:get_stack_max()
@@ -87,16 +90,16 @@ function minetest.handle_node_drops(pos, drops, digger)
 		if not inv then
 			return
 		end
-
+		-- FIXME Playing more item pickup sounds than needed
 		if (hand_name == name and hand_count ~= hand_max) then
 			digger:set_wielded_item(name .. " " .. hand_count + count) -- FIXME Will go beyond hand_max
 			minetest.sound_play("item_drop_pickup", {pos = pos, gain = 0.25, max_hear_distance = 7})
-			print("adding " .. name .. " " .. count .. " to wielded stack")
+			--print("adding " .. name .. " " .. count .. " to wielded stack")
 
 		elseif hand_name == "" then
 			digger:set_wielded_item(name .. " " .. count)
 			minetest.sound_play("item_drop_pickup", {pos = pos, gain = 0.25, max_hear_distance = 7})
-			print("placing " .. name .. " " .. count .. " in empty hand")
+			--print("placing " .. name .. " " .. count .. " in empty hand")
 
 		else
 			for i = 1, count do -- TODO Since most nearby items are merged, add in bulk
@@ -121,7 +124,7 @@ function minetest.handle_node_drops(pos, drops, digger)
 					end
 				end
 			end
-			print("dropping " .. name .. " " .. count)
+			--print("dropping " .. name .. " " .. count)
 		end
 	end
 end
