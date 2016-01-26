@@ -171,7 +171,7 @@ minetest.register_abm({
 		pos.y = pos.y - 1
 		local under = minetest.get_node(pos)
 		pos.y = pos.y + 1
-		if under.name == "default:desert_sand" then --or "default:sand" then
+		if under.name == "default:desert_sand" then
 			minetest.set_node(pos, {name="default:dry_shrub"})
 		elseif under.name ~= "default:grass" then
 			return
@@ -184,12 +184,12 @@ minetest.register_abm({
 		
 		local pos0 = {x = pos.x - 4, y = pos.y - 4, z = pos.z - 4}
 		local pos1 = {x = pos.x + 4, y = pos.y + 4, z = pos.z + 4}
-		if #minetest.find_nodes_in_area(pos0, pos1, "group:flora_block") > 0 then
+		--[[if #minetest.find_nodes_in_area(pos0, pos1, "group:flora_block") > 0 then
 			return
-		end
+		end--]] -- no flora blocks, here.
 		
 		local flowers = minetest.find_nodes_in_area(pos0, pos1, "group:flora")
-		if #flowers > 3 then
+		if #flowers > 5 then --3
 			return
 		end
 		
