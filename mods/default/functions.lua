@@ -40,9 +40,9 @@ end
 function default.node_sound_sand_defaults(table)
 	table = table or {}
 	table.footstep = table.footstep or
-			{name = "default_sand_footstep", gain = 0.5}
+			{name = "default_sand_footstep", gain = 0.2}
 	table.dug = table.dug or
-			{name = "default_sand_footstep", gain = 1.0}
+			{name = "default_sand_footstep", gain = 0.4}
 	table.place = table.place or
 			{name = "default_place_node", gain = 1.0}
 	default.node_sound_defaults(table)
@@ -64,7 +64,7 @@ function default.node_sound_leaves_defaults(table)
 	table.footstep = table.footstep or
 			{name = "default_grass_footstep", gain = 0.35}
 	table.dug = table.dug or
-			{name = "default_grass_footstep", gain = 0.85}
+			{name = "default_grass_footstep", gain = 0.7}
 	table.dig = table.dig or
 			{name = "default_dig_crumbly", gain = 0.4}
 	table.place = table.place or
@@ -167,19 +167,22 @@ minetest.register_abm({
 
 default.cool_lava_source = function(pos)
 	minetest.set_node(pos, {name = "default:obsidian"})
-	minetest.sound_play("default_cool_lava", {pos = pos,  gain = 0.25})
+	minetest.sound_play("default_cool_lava",
+		{pos = pos, max_hear_distance = 16, gain = 0.25})
 end
 
 default.cool_lava_flowing = function(pos)
 	minetest.set_node(pos, {name = "default:stone"})
-	minetest.sound_play("default_cool_lava", {pos = pos,  gain = 0.25})
+	minetest.sound_play("default_cool_lava",
+		{pos = pos, max_hear_distance = 16, gain = 0.25})
 end
 
 minetest.register_abm({
 	nodenames = {"default:lava_flowing"},
 	neighbors = {"group:water"},
 	interval = 1,
-	chance = 1,
+	chance = 2,
+	catch_up = false,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		default.cool_lava_flowing(pos, node, active_object_count, active_object_count_wider)
 	end
@@ -324,6 +327,21 @@ minetest.register_abm({
 	end
 })
 
+
+--
+-- dig upwards
+--
+
+function default.dig_up(pos, node, digger)
+	if digger == nil then return end
+	local np = {x = pos.x, y = pos.y + 1, z = pos.z}
+	local nn = minetest.get_node(np)
+	if nn.name == node.name then
+		minetest.node_dig(np, nn, digger)
+	end
+end
+
+
 --
 -- Leafdecay
 --
@@ -377,8 +395,10 @@ minetest.register_abm({
 			if trunkp then
 				local n = minetest.get_node(trunkp)
 				local reg = minetest.registered_nodes[n.name]
-				-- Assume ignore is a trunk, to make the thing work at the border of the active area
-				if n.name == "ignore" or (reg and reg.groups.tree and reg.groups.tree ~= 0) then
+				-- Assume ignore is a trunk, to make the thing
+				-- work at the border of the active area
+				if n.name == "ignore" or (reg and reg.groups.tree and
+						reg.groups.tree ~= 0) then
 					--print("cached trunk still exists")
 					return
 				end
@@ -392,7 +412,8 @@ minetest.register_abm({
 		end
 		default.leafdecay_trunk_find_allow_accumulator =
 				default.leafdecay_trunk_find_allow_accumulator - 1
-		-- Assume ignore is a trunk, to make the thing work at the border of the active area
+		-- Assume ignore is a trunk, to make the thing
+		-- work at the border of the active area
 		local p1 = minetest.find_node_near(p0, d, {"ignore", "group:tree"})
 		if p1 then
 			do_preserve = true
@@ -404,7 +425,7 @@ minetest.register_abm({
 		end
 		if not do_preserve then
 			-- Drop stuff other than the node itself
-			itemstacks = minetest.get_node_drops(n0.name)
+			local itemstacks = minetest.get_node_drops(n0.name)
 			for _, itemname in ipairs(itemstacks) do
 				if minetest.get_item_group(n0.name, "leafdecay_drop") ~= 0 or
 						itemname ~= n0.name then
@@ -422,6 +443,26 @@ minetest.register_abm({
 		end
 	end
 })
+
+
+--
+-- Moss growth on cobble near water
+--
+
+minetest.register_abm({
+	nodenames = {"default:cobble"},
+	neighbors = {"group:water"},
+	interval = 63,
+	chance = 127,
+	catch_up = false,
+	action = function(pos, node)
+		minetest.set_node(pos, {name = "default:mossycobble"})
+	end
+})
+
+--
+-- No sapling placed without water
+--
 
 minetest.register_on_placenode(function(pos, newnode, placer, oldnode)
 	if placer:is_player() then 
