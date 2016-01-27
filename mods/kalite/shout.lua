@@ -167,13 +167,15 @@ minetest.register_on_chat_message(function(name, message)
 	end
 end)
 
-
 minetest.register_chatcommand("me", {
 	params = "<action>",
 	description = "Perform an action for nearby players.",
 	privs = {shout = true},
 	func = function(name, param)
 		local shouter = minetest.get_player_by_name(name)
+		if not shouter then
+			return
+		end
 		local spos = shouter:getpos()
 		
 		-- Minetest library (modified)
