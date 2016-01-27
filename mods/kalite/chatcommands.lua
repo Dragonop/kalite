@@ -37,3 +37,10 @@ minetest.register_chatcommand("reset", {
                 end)
         end
 })
+
+minetest.register_chatcommand("list", {
+	description = "Show players on current chat channel",
+	func = function()
+		return true, "This doesn't work yet."
+	end
+})
