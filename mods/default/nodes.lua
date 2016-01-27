@@ -393,6 +393,7 @@ minetest.register_node("default:jungleleaves", {
 	visual_scale = 1.3,
 	tiles = {"default_jungleleaves.png"},
 	is_ground_content = false,
+	waving = 1,
 	paramtype = "light",
 	groups = {snappy=default.dig.leaves, leafdecay=3, flammable=2, leaves=1},
 	drop = {
@@ -468,6 +469,7 @@ minetest.register_node("default:leaves", {
 	drawtype = "allfaces_optional",
 	visual_scale = 1.3,
 	tiles = {"default_leaves.png"},
+	waving = 1,
 	is_ground_content = false,
 	paramtype = "light",
 	groups = {
