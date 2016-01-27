@@ -2,7 +2,7 @@
 --= Ambience lite by TenPlus1 (30th September 2015)
 
 local max_frequency_all = 1000 -- larger number means more frequent sounds (100-2000)
-local SOUNDVOLUME = 1
+local SOUNDVOLUME = minetest.setting_get("ambience_volume") or 1
 local volume = 0.3
 local ambiences
 local played_on_start = false
@@ -312,7 +312,11 @@ minetest.register_chatcommand("svol", {
 	description = "set sound volume (0.1 to 1.0)",
 	privs = {server = true},
 	func = function(name, param)
+		if not param then
+			return true, "Ambience volume is set to " .. tostring(SOUNDVOLUME)
+		end
 		SOUNDVOLUME = param
-		minetest.chat_send_player(name, "Sound volume set.")
-	end,
+		--minetest.chat_send_player(name, "Sound volume set.")
+		return true, "Sound volume set to " .. tostring(SOUNDVOLUME)
+	end
 })
