@@ -183,7 +183,8 @@ minetest.register_globalstep(function(dtime)
 		if minetest.registered_nodes[nod_head].walkable
 		and minetest.registered_nodes[nod_head].drawtype == "normal"
 		and not minetest.check_player_privs(player:get_player_name(), {noclip = true}) then
-
+			-- While I see why this is here, I think
+			-- Consider using get_air instead, if available.
 			if player:get_hp() > 0 then
 				player:set_hp(player:get_hp() - 2)
 			end
