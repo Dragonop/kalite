@@ -1093,13 +1093,13 @@ core.register_node("default:torch_floor", {
 	description = "Torch",
 	inventory_image = "default_torch.png",
 	wield_image = "default_torch.png",
-	wield_scale = {x=1, y=1, z=1+1/16},
+	wield_scale = {x = 1, y = 1, z = 1 + 1 / 16},
 	drawtype = "mesh",
 	mesh = "torch_floor.obj",
 	tiles = {
 		{
 		    name="default_torch_animated.png",
-		    animation = {type = "vertical_frames", aspect_w=16, aspect_h=16, length=3.3}
+		    animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 3.3}
 		}
 	},
 	paramtype = "light",
@@ -1107,9 +1107,13 @@ core.register_node("default:torch_floor", {
 	sunlight_propagates = true,
 	walkable = false,
 	light_source = 13,
-	groups = {choppy=2, dig_immediate=3, flammable=1,
-		not_in_creative_inventory=1, attached_node=1,
-		torch=1},
+	groups = {
+		dig = default.dig.instant,
+		flammable = 1,
+		not_in_creative_inventory = 1,
+		attached_node = 1,
+		torch = 1
+	},
 	drop = "default:torch",
 	selection_box = {
 		type = "wallmounted",
@@ -1121,13 +1125,13 @@ core.register_node("default:torch_floor", {
 core.register_node("default:torch_wall", {
 	inventory_image = "default_torch.png",
 	wield_image = "default_torch.png",
-	wield_scale = {x=1, y=1, z=1+1/16},
+	wield_scale = {x = 1, y = 1, z = 1 + 1 / 16},
 	drawtype = "mesh",
 	mesh = "torch_wall.obj",
 	tiles = {
 		{
 		    name="default_torch_animated.png",
-		    animation = {type="vertical_frames", aspect_w=16, aspect_h=16, length=3.3}
+		    animation = {type = "vertical_frames", aspect_w = 16, aspect_h = 16, length = 3.3}
 		}
 	},
 	paramtype = "light",
@@ -1136,12 +1140,11 @@ core.register_node("default:torch_wall", {
 	walkable = false,
 	light_source = 13,
 	groups = {
-		choppy=2,
-		dig_immediate=3,
-		flammable=1,
-		not_in_creative_inventory=1,
-		attached_node=1,
-		torch=1
+		dig = default.dig.instant,
+		flammable = 1,
+		not_in_creative_inventory = 1,
+		attached_node = 1,
+		torch = 1
 	},
 	drop = "default:torch",
 	selection_box = {

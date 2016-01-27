@@ -76,16 +76,14 @@ minetest.register_craft({
 })
 
 minetest.register_craft({
-	output = "default:sign_wall_protected 2",
 	type = "shapeless",
+	output = "default:sign_wall_protected 2",
 	recipe = {"default:sign_wall", "protector:protect2"}})
 
 minetest.register_craft({
-	output = 'default:torch 4',
-	recipe = {
-		{'default:coal_lump'},
-		{'default:stick'},
-	}
+	type = "shapeless",
+	output = "default:torch 4",
+	recipe = {"default:coal_lump", "default:stick"}
 })
 
 minetest.register_craft({
