@@ -114,6 +114,18 @@ for _, v in pairs(skin_db) do
 end
 
 -- Callbacks?
+minetest.register_on_newplayer(function(player)
+	local name = player:get_player_name()
+	minetest.after(0.1, function ()
+		local inv = minetest.get_inventory{type = "player", name = name}
+		inv:set_stack("skin", 1, {name = "kalite:skin_dusty"})
+
+		local detached = minetest.get_inventory{type = "detached", name = "skin_" .. name}
+		detached:set_stack("main", 1, {name = "kalite:skin_dusty"})
+	end)
+end)
+
+
 minetest.register_on_joinplayer(function(player, _)
 	local skin_inv = player:get_inventory()
 	skin_inv:set_size("skin", 1)
