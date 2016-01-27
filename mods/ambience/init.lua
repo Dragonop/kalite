@@ -11,63 +11,63 @@ local tempy = {}
 -- sound sets
 local night = {
 	handler = {}, frequency = 40,
-	{name="hornedowl", length = 2},
-	{name="wolves", length = 4},
-	{name="cricket", length = 6},
-	{name="deer", length = 7},
-	{name="frog", length = 1},
+	{name="ambience_hornedowl", length = 2},
+	{name="ambience_wolves", length = 4},
+	{name="ambience_cricket", length = 6},
+	{name="ambience_deer", length = 7},
+	{name="ambience_frog", length = 1},
 }
 
 local day = {
 	handler = {}, frequency = 40,
-	{name="cardinal", length = 3},
-	{name="craw", length = 3},
-	{name="bluejay", length = 6},
-	{name="canadianloon2", length = 14},
-	{name="robin", length = 4},
-	{name="bird1", length = 11},
-	{name="bird2", length = 6},
-	{name="crestedlark", length = 6},
-	{name="peacock", length = 2}
+	{name="ambience_cardinal", length = 3},
+	{name="ambience_craw", length = 3},
+	{name="ambience_bluejay", length = 6},
+	{name="ambience_canadianloon2", length = 14},
+	{name="ambience_robin", length = 4},
+	{name="ambience_bird1", length = 11},
+	{name="ambience_bird2", length = 6},
+	{name="ambience_crestedlark", length = 6},
+	{name="ambience_peacock", length = 2}
 }
 
 local high_up = {
 	handler = {}, frequency = 40,
-	{name="desertwind", length = 8},
+	{name="ambience_desertwind", length = 8},
 }
 
 local cave = {
 	handler = {}, frequency = 60,
-	{name="drippingwater1", length = 1.5},
-	{name="drippingwater2", length = 1.5}
+	{name="ambience_drippingwater1", length = 1.5},
+	{name="ambience_drippingwater2", length = 1.5}
 }
 
 local beach = {
 	handler = {}, frequency = 40,
-	{name="seagull", length = 4.5},
-	{name="beach", length = 13},
-	{name="gull", length = 1}
+	{name="ambience_seagull", length = 4.5},
+	{name="ambience_beach", length = 13},
+	{name="ambience_gull", length = 1}
 }
 
 local desert = {
 	handler = {}, frequency = 20,
-	{name="coyote", length = 2.5},
-	{name="desertwind", length = 8}
+	{name="ambience_coyote", length = 2.5},
+	{name="ambience_desertwind", length = 8}
 }
 
 local flowing_water = {
 	handler = {}, frequency = 1000,
-	{name="waterfall", length = 6}
+	{name="ambience_waterfall", length = 6}
 }
 
 local underwater = {
 	handler = {}, frequency = 1000,
-	{name="scuba", length = 8}
+	{name="ambience_scuba", length = 8}
 }
 
 local splash = {
 	handler = {}, frequency = 1000,
-	{name="swim_splashing",	length=3},
+	{name="ambience_swim_splashing", length = 3},
 }
 
 local lava = {
@@ -149,7 +149,7 @@ local get_ambience = function(player)
 	-- use voxelmanip to get and count node instances
 	local vm = VoxelManip()
 	local minp, maxp = vm:read_from_map(vector.subtract(pos, radius), vector.add(pos, radius))
-	local a = VoxelArea:new({MinEdge = minp, MaxEdge = maxp})
+	local a = VoxelArea:new{MinEdge = minp, MaxEdge = maxp}
 	local data = vm:get_data()
 
 	for z = -radius, radius do
