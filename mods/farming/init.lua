@@ -391,6 +391,7 @@ for i = 1, 8 do
 	}
 	minetest.register_node("farming:wheat_"..i, {
 		drawtype = "plantlike",
+		waving = 1,
 		tiles = {"farming_wheat_"..i..".png"},
 		paramtype = "light",
 		walkable = false,
@@ -486,6 +487,7 @@ for i=1,8 do
 	}
 	minetest.register_node("farming:cotton_"..i, {
 		drawtype = "plantlike",
+		waving = 1,
 		tiles = {"farming_cotton_"..i..".png"},
 		paramtype = "light",
 		walkable = false,
