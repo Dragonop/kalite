@@ -15,6 +15,8 @@ minetest.register_alias("flowers:flower_viola", "flowers:viola")
 minetest.register_node("flowers:dandelion_white", {
 	description = "White Dandelion",
 	drawtype = "plantlike",
+	waving = 1,
+	stack_max = 60,
 	tiles = {"flowers_dandelion_white.png"},
 	inventory_image = "flowers_dandelion_white.png",
 	wield_image = "flowers_dandelion_white.png",
@@ -40,6 +42,8 @@ minetest.register_node("flowers:dandelion_white", {
 minetest.register_node("flowers:dandelion_yellow", {
 	description = "Yellow Dandelion",
 	drawtype = "plantlike",
+	waving = 1,
+	stack_max = 60,
 	tiles = {"flowers_dandelion_yellow.png"},
 	inventory_image = "flowers_dandelion_yellow.png",
 	wield_image = "flowers_dandelion_yellow.png",
@@ -65,6 +69,8 @@ minetest.register_node("flowers:dandelion_yellow", {
 minetest.register_node("flowers:geranium", {
 	description = "Blue Geranium",
 	drawtype = "plantlike",
+	waving = 1,
+	stack_max = 60,
 	tiles = {"flowers_geranium.png"},
 	inventory_image = "flowers_geranium.png",
 	wield_image = "flowers_geranium.png",
@@ -90,6 +96,8 @@ minetest.register_node("flowers:geranium", {
 minetest.register_node("flowers:rose", {
 	description = "Rose",
 	drawtype = "plantlike",
+	waving = 1,
+	stack_max = 60,
 	tiles = {"flowers_rose.png"},
 	inventory_image = "flowers_rose.png",
 	wield_image = "flowers_rose.png",
@@ -115,6 +123,8 @@ minetest.register_node("flowers:rose", {
 minetest.register_node("flowers:tulip", {
 	description = "Tulip",
 	drawtype = "plantlike",
+	waving = 1,
+	stack_max = 60,
 	tiles = {"flowers_tulip.png"},
 	inventory_image = "flowers_tulip.png",
 	wield_image = "flowers_tulip.png",
@@ -140,6 +150,8 @@ minetest.register_node("flowers:tulip", {
 minetest.register_node("flowers:viola", {
 	description = "Viola",
 	drawtype = "plantlike",
+	waving = 1,
+	stack_max = 60,
 	tiles = {"flowers_viola.png"},
 	inventory_image = "flowers_viola.png",
 	wield_image = "flowers_viola.png",
