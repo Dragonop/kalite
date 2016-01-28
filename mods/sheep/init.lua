@@ -96,7 +96,10 @@ local def = {
     eat = {chance = 0.25,
       duration = 4,
       nodes = {
-	"default:grass_5", --"default:grass",
+        "default:grass_5",
+        "default:grass_4",
+        "default:grass_3",
+        "default:grass_2"
       }
     },
   },
