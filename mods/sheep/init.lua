@@ -1,23 +1,24 @@
 --= Sheep for Creatures MOB-Engine (cme) =--
 -- Copyright (c) 2015 BlockMen <blockmen2015@gmail.com>
---
+
 -- init.lua
---
--- This software is provided 'as-is', without any express or implied warranty. In no
--- event will the authors be held liable for any damages arising from the use of
--- this software.
---
--- Permission is granted to anyone to use this software for any purpose, including
--- commercial applications, and to alter it and redistribute it freely, subject to the
--- following restrictions:
---
--- 1. The origin of this software must not be misrepresented; you must not
--- claim that you wrote the original software. If you use this software in a
--- product, an acknowledgment in the product documentation is required.
--- 2. Altered source versions must be plainly marked as such, and must not
--- be misrepresented as being the original software.
--- 3. This notice may not be removed or altered from any source distribution.
---
+
+--[[
+This software is provided 'as-is', without any express or implied warranty. In
+no event will the authors be held liable for any damages arising from the use
+of this software.
+
+Permission is granted to anyone to use this software for any purpose, including
+commercial applications, and to alter it and redistribute it freely, subject to
+the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software in a
+   product, an acknowledgment in the product documentation is required.
+2. Altered source versions must be plainly marked as such, and must not
+   be misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+--]]
 
 
 -- shears
@@ -40,7 +41,9 @@ local function shear(self, drop_count, sound)
     local pos = self.object:getpos()
 
     if sound then
-      core.sound_play("creatures_shears", {pos = pos, gain = 1, max_hear_distance = 10})
+      core.sound_play("creatures_shears", {
+        pos = pos, gain = 1, max_hear_distance = 10
+      })
     end
     self.object:set_properties({textures = {"creatures_sheep.png"}})
     creatures.dropItems(pos, {{"wool:white", drop_count}})
@@ -76,11 +79,11 @@ local def = {
   },
 
   sounds = {
-      on_damage = {name = "creatures_sheep", gain = 0.5, distance = 10},
-      on_death = {name = "creatures_sheep", gain = 0.5, distance = 10},
-      swim = {name = "creatures_splash", gain = 0.5, distance = 10,},
+      on_damage = {name = "creatures_sheep", gain = 0.25, distance = 10},
+      on_death = {name = "creatures_sheep", gain = 0.25, distance = 10},
+      swim = {name = "creatures_splash", gain = 0.25, distance = 10,},
       random = {
-        idle = {name = "creatures_sheep", gain = 0.3, distance = 10, time_min = 23},
+        idle = {name = "creatures_sheep", gain = 0.15, distance = 10, time_min = 23},
       },
   },
 
@@ -93,7 +96,7 @@ local def = {
     eat = {chance = 0.25,
       duration = 4,
       nodes = {
-	"default:grass",
+	"default:grass_5", --"default:grass",
       }
     },
   },
