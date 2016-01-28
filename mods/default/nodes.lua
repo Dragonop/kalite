@@ -390,10 +390,10 @@ minetest.register_node("default:junglewood", {
 minetest.register_node("default:jungleleaves", {
 	description = "Jungle Leaves",
 	drawtype = "allfaces_optional",
+	waving = 1,
 	visual_scale = 1.3,
 	tiles = {"default_jungleleaves.png"},
 	is_ground_content = false,
-	waving = 1,
 	paramtype = "light",
 	groups = {snappy=default.dig.leaves, leafdecay=3, flammable=2, leaves=1},
 	drop = {
@@ -440,6 +440,7 @@ minetest.register_alias("junglesapling", "default:junglesapling")
 minetest.register_node("default:junglegrass", {
 	description = "Jungle Grass",
 	drawtype = "plantlike",
+	waving = 1,
 	visual_scale = 1.3,
 	tiles = {"default_junglegrass.png"},
 	is_ground_content = true,
@@ -467,9 +468,9 @@ minetest.register_node("default:junglegrass", {
 minetest.register_node("default:leaves", {
 	description = "Leaves",
 	drawtype = "allfaces_optional",
+	waving = 1,
 	visual_scale = 1.3,
 	tiles = {"default_leaves.png"},
-	waving = 1,
 	is_ground_content = false,
 	paramtype = "light",
 	groups = {
@@ -1505,7 +1506,8 @@ minetest.register_node("default:sapling", {
 minetest.register_node("default:dry_shrub", {
 	description = "Dry Shrub",
 	drawtype = "plantlike",
-	visual_scale = 1, -- 0.8
+	waving = 1,
+	visual_scale = 1.0,
 	tiles = {"default_dry_shrub.png"},
 	inventory_image = "default_dry_shrub.png",
 	wield_image = "default_dry_shrub.png",
