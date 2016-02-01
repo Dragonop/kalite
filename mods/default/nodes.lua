@@ -219,7 +219,7 @@ minetest.register_node("default:dry_grass", {
 		"default_dirt.png",
 		{name = "default_dirt.png^default_dry_grass_side.png",
 			tileable_vertical = false}},
-	groups = {crumbly = default.dig.dirt, soil = 1},
+	groups = {crumbly = default.dig.dirt_with_grass, soil = 1},
 	drop = "default:dry_dirt",
 	sounds = default.node_sound_dirt_defaults({
 		footstep = {name = "default_grass_footstep", gain = 0.4},
