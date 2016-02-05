@@ -206,15 +206,18 @@ core.register_entity(":__builtin:item", {
 	on_punch = function(self, hitter)
 		local pos = hitter:getpos()
 		local inv = hitter:get_inventory()
-		if inv and self.itemstring ~= '' then
+		if inv and self.itemstring ~= ""
+				and hitter:get_wielded_item():get_name() == "" then
+			hitter:set_wielded_item(self.itemstring)
+		elseif inv and self.itemstring ~= "" then
 			local left = inv:add_item("main", self.itemstring)
 			if left and not left:is_empty() then
 				self.itemstring = left:to_string()
 				return
 			end
 		end
-		self.itemstring = ''
+		self.itemstring = ""
 		self.object:remove()
-		minetest.sound_play("item_drop_pickup", {pos = pos, gain = 0.3, max_hear_distance = 8})
+		minetest.sound_play("item_drop_pickup", {pos=pos, gain=0.3, max_hear_distance=8})
 	end,
 })
