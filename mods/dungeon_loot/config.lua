@@ -39,7 +39,7 @@ dungeon_loot.loot_types = {
 -- random number is much greater than the item's min_depth, the amount 
 -- can grow pretty big.
 dungeon_loot.treasure_list = {
-	{name="default:steel_ingot", min_depth = 0},
+	{name="default:iron_ingot", min_depth = 0},
 	{name="default:bronze_ingot", min_depth = 20},
 	{name="default:gold_ingot", min_depth = 45},
 	--{name="default:mese_crystal", min_depth = 50},
@@ -53,7 +53,7 @@ dungeon_loot.treasure_list = {
 dungeon_loot.tools_list = {
 	{name="default:pick_cobble", min_depth = 0},
 	{name="default:shovel_bronze", min_depth = 38},
-	{name="default:pick_steel", min_depth = 40},
+	{name="default:pick_iron", min_depth = 40},
 	{name="default:axe_bronze", min_depth = 95},
 	{name="default:pick_bronze", min_depth = 100}
 }
@@ -61,7 +61,7 @@ dungeon_loot.tools_list = {
 dungeon_loot.weapons_list = {
 	{name="default:sword_wood", min_depth = 0},
 	{name="default:sword_cobble", min_depth = 50},
-	{name="default:sword_steel", min_depth = 150},
+	{name="default:sword_iron", min_depth = 150},
 	{name="default:sword_bronze", min_depth = 250}
 }
 
