@@ -11,8 +11,8 @@ dofile(modpath.."/enchanting.lua")
 dofile(modpath.."/hive.lua")
 dofile(modpath.."/itemframe.lua")
 dofile(modpath.."/mailbox.lua")
-dofile(modpath.."/nodes.lua")
-dofile(modpath.."/recipes.lua")
+dofile(modpath.."/nodes.lua")--]]
+dofile(modpath.."/recipes.lua")--[[
 dofile(modpath.."/rope.lua")
 dofile(modpath.."/sitting.lua")
 dofile(modpath.."/worktable.lua")
